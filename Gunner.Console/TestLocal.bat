@@ -1,0 +1,1 @@
+Gunner -l "mock-counter.log" -t 10000 -p 5000 -r 100 -s 100 -i 50 -n "allergenName" -u "http://localhost:8081/v2/products/00219460000000.json,http://localhost:8081/v2/products/00219460000001.json,http://localhost:8081/v2/products/00219460000002.json"

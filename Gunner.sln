@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Engine", "Gunner.Engine\Gunner.Engine.csproj", "{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Tests", "Gunner.Tests\Gunner.Tests.csproj", "{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Console", "Gunner.Console\Gunner.Console.csproj", "{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

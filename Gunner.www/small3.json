@@ -1,0 +1,137 @@
+[
+  {
+    "_id": "544a534edeb129ee461b79fd",
+    "index": 0,
+    "guid": "456857d7-3f8b-4d4c-adb2-438d17c30375",
+    "isActive": true,
+    "balance": "$2,104.90",
+    "picture": "http://placehold.it/32x32",
+    "age": 38,
+    "eyeColor": "green",
+    "name": "Kellie Gallegos",
+    "gender": "female",
+    "company": "TURNLING",
+    "email": "kelliegallegos@turnling.com",
+    "phone": "+1 (902) 505-2582",
+    "address": "843 Newport Street, Cedarville, South Carolina, 7227",
+    "about": "Duis amet eiusmod ullamco et labore laboris nostrud sunt. Est eiusmod aliqua ea dolor sit non. Elit irure quis voluptate pariatur ex sit excepteur aute in nisi. Eu eu ut nulla culpa sit ea ipsum dolor amet consequat tempor. Duis commodo est laborum ad voluptate duis. Minim ea amet nulla culpa cillum consectetur tempor nisi occaecat aute et dolor.\r\n",
+    "registered": "2014-01-30T10:53:45 -00:00",
+    "latitude": 28.054164,
+    "longitude": -23.573393,
+    "tags": [
+      "veniam",
+      "cillum",
+      "labore",
+      "voluptate",
+      "sunt",
+      "sit",
+      "occaecat"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Trujillo Gilbert"
+      },
+      {
+        "id": 1,
+        "name": "Krista Bullock"
+      },
+      {
+        "id": 2,
+        "name": "Dillard Griffith"
+      }
+    ],
+    "greeting": "Hello, Kellie Gallegos! You have 8 unread messages.",
+    "favoriteFruit": "apple"
+  },
+  {
+    "_id": "544a534e77618cc0e7509756",
+    "index": 1,
+    "guid": "4c4b00f3-eae2-497f-b9ee-bafaf8d3c3fa",
+    "isActive": false,
+    "balance": "$2,990.83",
+    "picture": "http://placehold.it/32x32",
+    "age": 21,
+    "eyeColor": "green",
+    "name": "Sears Huff",
+    "gender": "male",
+    "company": "ENERSAVE",
+    "email": "searshuff@enersave.com",
+    "phone": "+1 (906) 507-2498",
+    "address": "893 Barbey Street, Juntura, North Carolina, 4210",
+    "about": "Laborum dolor mollit fugiat veniam mollit proident ipsum magna. Veniam fugiat sit laboris nostrud. Voluptate laboris in aliqua laboris aliqua nostrud. Commodo labore anim fugiat laborum ipsum cupidatat eu sit dolor duis aliqua non. Excepteur Lorem ut dolore nisi. Proident ipsum culpa occaecat id id qui proident dolore dolore enim. Velit ex cupidatat anim irure aliqua dolore.\r\n",
+    "registered": "2014-01-13T06:05:14 -00:00",
+    "latitude": 62.871217,
+    "longitude": 104.219856,
+    "tags": [
+      "laboris",
+      "reprehenderit",
+      "proident",
+      "do",
+      "sunt",
+      "sit",
+      "et"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Russell Monroe"
+      },
+      {
+        "id": 1,
+        "name": "Walker Casey"
+      },
+      {
+        "id": 2,
+        "name": "Carey Diaz"
+      }
+    ],
+    "greeting": "Hello, Sears Huff! You have 8 unread messages.",
+    "favoriteFruit": "banana"
+  },
+  {
+    "_id": "544a534e304bfb34cba2adfc",
+    "index": 2,
+    "guid": "86b98b9c-da9c-40f7-aa60-e168a1be9d97",
+    "isActive": false,
+    "balance": "$3,514.37",
+    "picture": "http://placehold.it/32x32",
+    "age": 20,
+    "eyeColor": "green",
+    "name": "Marshall Hartman",
+    "gender": "male",
+    "company": "STRALOY",
+    "email": "marshallhartman@straloy.com",
+    "phone": "+1 (938) 416-2031",
+    "address": "731 Jerome Street, Kohatk, Nebraska, 4646",
+    "about": "Dolor officia reprehenderit incididunt anim tempor id. Irure Lorem id aliquip cillum proident ad culpa esse nulla ut. Ipsum pariatur commodo quis sint consequat aliquip non commodo ipsum Lorem nulla irure nostrud.\r\n",
+    "registered": "2014-09-17T17:07:11 -01:00",
+    "latitude": -48.89672,
+    "longitude": 123.516808,
+    "tags": [
+      "tempor",
+      "irure",
+      "minim",
+      "reprehenderit",
+      "officia",
+      "veniam",
+      "ad"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Rhodes Hensley"
+      },
+      {
+        "id": 1,
+        "name": "Fran Medina"
+      },
+      {
+        "id": 2,
+        "name": "Tracie Keller"
+      }
+    ],
+    "greeting": "Hello, Marshall Hartman! You have 3 unread messages.",
+    "favoriteFruit": "apple"
+  }
+]

@@ -1,0 +1,137 @@
+[
+  {
+    "_id": "544a536dbaa51a121eda1dbb",
+    "index": 0,
+    "guid": "defc5865-ab58-447e-b09b-4d89c008f941",
+    "isActive": true,
+    "balance": "$3,643.52",
+    "picture": "http://placehold.it/32x32",
+    "age": 35,
+    "eyeColor": "brown",
+    "name": "Roberts Camacho",
+    "gender": "male",
+    "company": "HIVEDOM",
+    "email": "robertscamacho@hivedom.com",
+    "phone": "+1 (987) 531-2259",
+    "address": "180 Eaton Court, Jackpot, Wyoming, 3261",
+    "about": "Ut incididunt minim velit dolore exercitation pariatur minim nisi aute cillum officia pariatur proident. Aliqua laboris elit in minim est anim aliquip veniam sit. Cupidatat sunt officia ipsum eu occaecat. Aliqua laborum ullamco aliqua id dolore do et aute ea proident. Pariatur sunt exercitation nostrud officia Lorem laboris eiusmod adipisicing.\r\n",
+    "registered": "2014-05-30T00:40:38 -01:00",
+    "latitude": -89.019601,
+    "longitude": -35.503492,
+    "tags": [
+      "culpa",
+      "nisi",
+      "labore",
+      "incididunt",
+      "sit",
+      "consectetur",
+      "fugiat"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Garner Curry"
+      },
+      {
+        "id": 1,
+        "name": "Marilyn Pittman"
+      },
+      {
+        "id": 2,
+        "name": "Mcclain Weber"
+      }
+    ],
+    "greeting": "Hello, Roberts Camacho! You have 8 unread messages.",
+    "favoriteFruit": "strawberry"
+  },
+  {
+    "_id": "544a536deaee2f50a941bb4e",
+    "index": 1,
+    "guid": "125dc7dc-75aa-4762-bb5b-8159949833ae",
+    "isActive": true,
+    "balance": "$3,943.24",
+    "picture": "http://placehold.it/32x32",
+    "age": 30,
+    "eyeColor": "blue",
+    "name": "Conrad Rollins",
+    "gender": "male",
+    "company": "NEOCENT",
+    "email": "conradrollins@neocent.com",
+    "phone": "+1 (967) 532-2638",
+    "address": "806 Hampton Avenue, Cascades, Indiana, 7051",
+    "about": "Ut proident enim commodo commodo commodo et. Cupidatat Lorem ea deserunt dolore ex incididunt sit cupidatat veniam pariatur commodo amet nulla laborum. Culpa nostrud incididunt reprehenderit laboris dolor do duis anim in qui eu. Dolor laboris aute in voluptate. Nisi veniam sunt nostrud commodo voluptate ut duis laboris non laborum ut. Proident irure excepteur eiusmod velit incididunt aliquip occaecat in. Adipisicing anim nisi voluptate tempor.\r\n",
+    "registered": "2014-07-16T22:26:56 -01:00",
+    "latitude": -61.653481,
+    "longitude": 53.02218,
+    "tags": [
+      "occaecat",
+      "excepteur",
+      "officia",
+      "duis",
+      "commodo",
+      "culpa",
+      "pariatur"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Reva Tanner"
+      },
+      {
+        "id": 1,
+        "name": "Keller Singleton"
+      },
+      {
+        "id": 2,
+        "name": "Luann Beard"
+      }
+    ],
+    "greeting": "Hello, Conrad Rollins! You have 10 unread messages.",
+    "favoriteFruit": "strawberry"
+  },
+  {
+    "_id": "544a536ddd7f6fd8cc6fdd11",
+    "index": 2,
+    "guid": "56a404f7-5fe4-4aaa-884e-575b340cebf9",
+    "isActive": false,
+    "balance": "$2,975.97",
+    "picture": "http://placehold.it/32x32",
+    "age": 31,
+    "eyeColor": "brown",
+    "name": "Cheri Warren",
+    "gender": "female",
+    "company": "TERASCAPE",
+    "email": "cheriwarren@terascape.com",
+    "phone": "+1 (961) 557-2929",
+    "address": "317 Langham Street, Convent, New Hampshire, 1130",
+    "about": "Ipsum labore mollit exercitation eu cillum ipsum est laborum ex sunt. Velit ea sint in tempor eiusmod anim Lorem aute sint nisi officia. Velit magna proident elit ullamco in labore consequat. Cillum sit ea tempor ullamco ea sint consectetur aliquip exercitation magna qui culpa dolore consectetur. Culpa aliquip minim laboris ut adipisicing sunt nostrud mollit velit ad officia enim. Cupidatat voluptate amet non mollit dolore id cillum. Amet velit officia deserunt ad laboris laboris nostrud mollit ex officia.\r\n",
+    "registered": "2014-03-17T08:56:09 -00:00",
+    "latitude": -35.533679,
+    "longitude": -126.769133,
+    "tags": [
+      "sunt",
+      "dolore",
+      "reprehenderit",
+      "culpa",
+      "est",
+      "cillum",
+      "aliqua"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Katie Keller"
+      },
+      {
+        "id": 1,
+        "name": "Cannon Hines"
+      },
+      {
+        "id": 2,
+        "name": "Donovan Allen"
+      }
+    ],
+    "greeting": "Hello, Cheri Warren! You have 5 unread messages.",
+    "favoriteFruit": "apple"
+  }
+]

@@ -16,7 +16,8 @@ namespace Gunner.Engine
         public MachineGun(Options options)
         {
             _options = options;
-            Urls = _options.Urls; // argh, messy, static global, todo fix this up, some D/I.
+            Urls = _options.Urls.Select( u=> string.Format("{0}{1}",options.Root,u)).ToArray();            
+            // argh, messy, static global, todo fix this up, some D/I.
         }
         private const int VerboseMessagesToShow = 10;
         
@@ -40,57 +41,76 @@ namespace Gunner.Engine
         public void Run()
         {
             Console.WriteLine(Title);
-            for (int i =  _options.Start; i < _options.Users; i += _options.Increment)
+            Console.WriteLine(Options.DefaultHeader);
+            if (_options.Verbose)
             {
-                for (int r = 0; r < _options.Repeat; r++) TestCocurrentRequests(_options, i);
+                Console.WriteLine("------ test settings ------");
+                Console.WriteLine("{0} to {1} step {2}. \n{3} req's/user. {4}ms between batches.",
+                _options.Start,
+                _options.Users,
+                _options.Increment,
+                _options.Repeat,
+                _options.Pause);
+                //TODO: calculate total number of requests that this test will perform.
+                Console.WriteLine("Endpoints (urls):");
+                int x = 0;
+                _options.Urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
+                Console.WriteLine("---------------------------");
+            }
+            for (int users =  _options.Start; users < _options.Users; users += _options.Increment)
+            {
+                TestCocurrentRequests(_options, users,_options.Repeat);
                 Thread.Sleep(_options.Pause);
             }
-            Console.WriteLine("--- finished ---");
+            Console.WriteLine("Total requests:{0}",totalRequests);
+            Console.WriteLine("-------- finished ---------");
         }
 
-        static int requests = 0;
+        static int totalRequests = 0;
+        static int batchRequests = 0;
         static int success = 0;
         static int fail = 0;
 
 
-        static void TestCocurrentRequests(Options options, int batchSize)
+        static void TestCocurrentRequests(Options options,int users, int repeat)
         {
-            requests = 0;
+            batchRequests = 0;
             success = 0;
             fail = 0;
             var tasks = new List<Task>();
             var sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < batchSize; i++)
+            for (int i = 0; i < users; i++)
             {
 
                 // do a parallel.foreach inside each task ;-D
                 var task = new Task(() =>
                 {
-                    try
+                    string cachebuster = options.Cachebuster ? "?buster=" + Guid.NewGuid().ToString() : "";
+                        
+                    var client = new System.Net.WebClient();
+                    for (int b = 0; b < repeat; b++)
                     {
-                        string cachebuster = options.Cachebuster ? "?buster=" + Guid.NewGuid().ToString() : "";
-                        var url = GetUrl(i) + cachebuster;
-                        var client = new System.Net.WebClient();
-                        Interlocked.Increment(ref requests);
-                        var result = client.DownloadString(url);
-                        if (options.Verbose && requests < VerboseMessagesToShow)
-
-                        if (result.Contains(options.Find))
+                        var url = GetUrl(b) + cachebuster;
+                        string result = "";
+                        try
                         {
-                            Interlocked.Increment(ref success);
+                            Interlocked.Increment(ref batchRequests);
+                            Interlocked.Increment(ref totalRequests);
+                            result = client.DownloadString(url);
+                            if (options.Verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine(result);
+                            if (result.Contains(options.Find)) 
+                                Interlocked.Increment(ref success);
+                            else
+                                Interlocked.Increment(ref fail);
                         }
-                        else
+                        catch (Exception ex)
+                        {
                             Interlocked.Increment(ref fail);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (options.Verbose && requests < VerboseMessagesToShow)
-                        {
-                            Console.WriteLine("EXCEPTION:{0}",ex.Message);
+                            if (options.Verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine("EXCEPTION:{0}", ex.Message);
                         }
-                        Interlocked.Increment(ref fail);
                     }
+
                 });
                 tasks.Add(task);
                 task.Start();
@@ -98,11 +118,11 @@ namespace Gunner.Engine
             // this will block
             Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
             sw.Stop();
-            float rps = ((float)requests / sw.ElapsedMilliseconds) * 1000;
-            float averesponse = (float)sw.ElapsedMilliseconds / (float)requests;
+            float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000;
+            float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
             // this is not actually waiting for all threads??
             //todo: move to logging class
-            string logline = string.Format(options.Format, requests, rps, batchSize, success, fail, averesponse);
+            string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);
             Console.WriteLine(logline);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
             if(options.LogPath!=null) File.AppendAllLines(options.LogPath, new []{ logline});

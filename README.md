@@ -97,7 +97,6 @@ Requirements
 
 Immediate Current work
 ---
-
  - Get tests results as accurate as is needed to be a useful tool. Possibly write an acceptance test, something along the lines of:
 ```
 	Given gunner 
@@ -106,6 +105,10 @@ Immediate Current work
 	And reporting requests per second of (x)
 	Then the webserver should report similar requests per second within an acceptable tolerance  
 ```
+
+ - CSV input of urls. If any of the urls passed is a file, then url values will be read from the file. One value per line.
+ 
+
 Roadmap (high priority ideas)
 ---
 

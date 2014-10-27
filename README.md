@@ -94,6 +94,11 @@ Requirements
 	Gunner was built with .net 4.5. In the backlog to consider a lesser .net version so that it won't require a .net update on a server.
 
 
+Immediate Current work
+---
+
+ - Get tests results as accurate as is needed to be a useful tool.
+
 Roadmap (high priority ideas)
 ---
 

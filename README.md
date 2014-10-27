@@ -67,7 +67,7 @@ Gunner runs and outputs the following:
 
 Notes:
 ---
-**__Gunner currently reports different values to what system performance monitors report, specifically the requests per second. I am manually testing by running the following on the command line of the windows server I'm hitting;__**
+__**Gunner currently reports different values to what system performance monitors report, specifically the requests per second.**__ This may or may not be correct, despite the apparent contradiction. I am busy investigating further. I am manually testing by running the following on the command line of the windows server I'm hitting;
 
 
 	typeperf "\W3SVC_W3WP(_Total)\Requests / Sec"
@@ -91,14 +91,21 @@ Thanks to [Giacomo Stelluti](https://github.com/gsscoder) Scala for the excellen
 Requirements
 ---
 * .Net 4.5
-	Gunner was built with .net 4.5. In the backlog to consider a lesser .net version so that it won't require a .net update on a server.
+
+  Gunner was built with .net 4.5. It's in the backlog to consider a lesser .net version so that there's less need for .net updates on client (test) servers.
 
 
 Immediate Current work
 ---
 
- - Get tests results as accurate as is needed to be a useful tool.
-
+ - Get tests results as accurate as is needed to be a useful tool. Possibly write an acceptance test, something along the lines of:
+```
+	Given gunner 
+	And a webserver
+	When gunner is running 
+	And reporting requests per second of (x)
+	Then the webserver should report similar requests per second within an acceptable tolerance  
+```
 Roadmap (high priority ideas)
 ---
 

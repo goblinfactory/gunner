@@ -33,6 +33,8 @@ namespace Gunner.Console
         {
             var options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
+            if (options.Csv.HasText() && options.UrlList.HasText()) throw new ApplicationException("You cannot provide a value for csv as well as urls, only 1 option can be selected.");
+            if (options.Users > 5000) throw new ApplicationException("Maximum value atmo for users is 5000. This is due to socket connection limit. Later will detect if user can support more, if not show message how to tell OS you want more.");
             if (!string.IsNullOrWhiteSpace(options.Logfile))
             {
                 var path = Path.Combine(Environment.CurrentDirectory, options.Logfile);

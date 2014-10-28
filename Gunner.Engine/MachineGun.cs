@@ -17,26 +17,10 @@ namespace Gunner.Engine
         public MachineGun(Options options)
         {
             _options = options;
-            Urls = _options.Urls.Select( u=> string.Format("{0}{1}",options.Root,u)).ToArray();            
-            // argh, messy, static global, todo fix this up, some D/I.
+            _urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
         }
+
         private const int VerboseMessagesToShow = 10;
-        
-        //const string format = "{0,-7},{1,-11:0.00},{2,-7},{3,-7},{4,-7}, {5,-7:0.0000}ms";
-        //const int numUsers = 20000;
-        //const int pauseBetweenTests = 8000;
-        //const int repeatTests = 100;
-        //const int start = 500;
-        //const int increment = 100;
-        //static bool cachebusterOn = true;
-
-        // to monitor with perfmon add : W3SVC_W3WP 
-        // -> requests / Sec 
-        // -> total Http Requests served 
-        // -> average response?
-
-        //TODO: introduce console writer for testing
-
         public const string Title = "Gunner v 0.1";
 
         public void Run()
@@ -55,7 +39,7 @@ namespace Gunner.Engine
                 //TODO: calculate total number of requests that this test will perform.
                 Console.WriteLine("Endpoints (urls):");
                 int x = 0;
-                _options.Urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
+                _urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
                 Console.WriteLine("---------------------------");
             }
             for (int users =  _options.Start; users < _options.Users; users += _options.Increment)
@@ -113,6 +97,7 @@ namespace Gunner.Engine
             sw.Start();
             for (int i = 0; i < users; i++)
             {
+                // NB! need to dispose these httpclients!
                 var client = new HttpClient();
                 var task = GetUrlAsync(repeat, client, GetUrl, options.Find, options.Verbose, VerboseMessagesToShow,options.Cachebuster);
                 tasks.Add(task);
@@ -129,14 +114,13 @@ namespace Gunner.Engine
         }
 
 
-        private static string[] Urls;
+        private static string[] _urls;
 
         // to do, convert to a class, and store an instance of the class into a static
         private static string GetUrl(int i, bool cachebust)
         {
-            string cachebuster = cachebust ? "?buster=" + Guid.NewGuid().ToString() : "";
-            int len = Urls.Length;
-            return Urls[i%len];
+            int len = _urls.Length;
+            return _urls[i%len];
         }
 
         // where's that library that makes sending paramters to console apps easy?

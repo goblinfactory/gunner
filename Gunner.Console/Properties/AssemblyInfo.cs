@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Gunner.Console")]
-[assembly: AssemblyCopyright("(C) Alan Hemmings, 2014")]
+[assembly: AssemblyCopyright("Gunner")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

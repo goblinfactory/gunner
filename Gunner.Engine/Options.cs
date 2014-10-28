@@ -7,6 +7,10 @@ namespace Gunner.Engine
 {
     public class Options
     {
+        [Option('a', "csv",
+            HelpText = "relative path to a csv file containing urls to request.")]
+        public string Csv { get; set; }
+
         [Option('c', "cachebuster", DefaultValue = true,
             HelpText = "Whether to append a cachebuster string to the end of your url or not.")]
         public bool Cachebuster { get; set; }
@@ -61,11 +65,12 @@ namespace Gunner.Engine
         public int Start { get; set; }
 
 
-        public string[] Urls
-        {
-            get { return UrlList.Split(new string[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries); }
-        }
-        [Option('u', "urls", Required = true,
+        //public string[] Urls
+        //{
+        //    get { return UrlList.Split(new string[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries); }
+        //}
+
+        [Option('u', "urls", Required = false,
            HelpText = "delimited list of urls to test.  Each user will be assigned a url from the list of urls, using round robin.")]
         public string UrlList { get; set; }
 

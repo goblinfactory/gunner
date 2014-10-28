@@ -120,6 +120,7 @@ Roadmap (high priority ideas)
 
 Idea backlog (unsorted)
 ---
+  - __extend csv__, add extra fields to csv file, (url,verb,status,find,body)
   - __authentication__ oauth, forms, and custom headers, so that can be used for journey testing.
   - __cookies,other verbs, test state keyval store, body post__, so that can easily be used for journey testing.
   - __nlog__ (would allow for logging to be configured and output to Elastic Search, which would allow using ELK to investigate bigger data sets, e.g. when doing a root cause analysis.)

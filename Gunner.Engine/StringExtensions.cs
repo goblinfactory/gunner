@@ -13,5 +13,10 @@ namespace Gunner.Engine
             if (string.IsNullOrWhiteSpace(src)) return "";
             return src.Substring(0, len >= src.Length ? src.Length : len);
         }
+
+        public static bool HasText(this string src)
+        {
+            return (!string.IsNullOrWhiteSpace(src));
+        }
     }
 }

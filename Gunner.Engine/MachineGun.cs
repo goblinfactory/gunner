@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -36,15 +37,14 @@ namespace Gunner.Engine
                 _options.Increment,
                 _options.Repeat,
                 _options.Pause);
-                //TODO: calculate total number of requests that this test will perform.
                 Console.WriteLine("Endpoints (urls):");
                 int x = 0;
                 _urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
                 Console.WriteLine("---------------------------");
             }
-            for (int users =  _options.Start; users < _options.Users; users += _options.Increment)
+            for (int batch =  _options.Start; batch < _options.Users; batch += _options.Increment)
             {
-                TestCocurrentRequests(_options, users,_options.Repeat);
+                TestCocurrentRequests(_options, batch,_options.Repeat);
                 Thread.Sleep(_options.Pause);
             }
             Console.WriteLine("Total requests:{0}",totalRequests);
@@ -56,36 +56,32 @@ namespace Gunner.Engine
         static int success = 0;
         static int fail = 0;
 
-        public static async Task GetUrlAsync(int requests, HttpClient client, Func<int,bool, string> nextString, string find, bool verbose, int verboseMessagesToShow, bool cachebust)
+
+        public static void Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
         {
-            int i = requests - 1;
-            if (requests == 0) return;
-            var url = nextString(i,cachebust);
-            Interlocked.Increment(ref batchRequests);
-            Interlocked.Increment(ref totalRequests);
             try
             {
                 bool verbosed = (verbose && totalRequests < verboseMessagesToShow);
-                var result = await client.GetStringAsync(url);
+                var result = client.DownloadString(url);
+                Interlocked.Increment(ref batchRequests);
+                Interlocked.Increment(ref totalRequests);
                 if (verbosed) Console.WriteLine(result);
                 if (result.Contains(find))
                     Interlocked.Increment(ref success);
                 else
                 {
                     //todo replace with single line view, remove carriage returns.
-                    if (verbosed) Console.WriteLine("could not find '{0}' in result: {1}",find,result.First(25));
+                    if (verbosed) Console.WriteLine("could not find '{0}' in result: {1}", find, result.First(25));
                     Interlocked.Increment(ref fail);
                 }
-                    
             }
             catch (Exception ex)
             {
                 Interlocked.Increment(ref fail);
                 if (verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine("EXCEPTION:{0}", ex.Message);
-                throw;
+                 if (logErrors) LogError(url, ex, logPath);
             }
         }
-
 
         static void TestCocurrentRequests(Options options,int users, int repeat)
         {
@@ -95,14 +91,24 @@ namespace Gunner.Engine
             var tasks = new List<Task>();
             var sw = new Stopwatch();
             sw.Start();
+
             for (int i = 0; i < users; i++)
             {
-                // NB! need to dispose these httpclients!
-                var client = new HttpClient();
-                var task = GetUrlAsync(repeat, client, GetUrl, options.Find, options.Verbose, VerboseMessagesToShow,options.Cachebuster);
+                var task = Task.Run(() =>
+                    {
+                        var client = new WebClient();
+                        for (int r = 0; r < repeat; r++)
+                        {
+                            var url = GetUrl(r, options.Cachebuster);
+                            Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                        }
+                    });
+
                 tasks.Add(task);
             }
+            
             Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
+
             sw.Stop();
             float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000;
             float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
@@ -110,7 +116,27 @@ namespace Gunner.Engine
             string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);
             Console.WriteLine(logline);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
-            if(options.LogPath!=null) File.AppendAllLines(options.LogPath, new []{ logline});
+            if (options.Logfile != null) File.AppendAllLines(options.Logfile, new[] { logline });
+        }
+
+        public static List<string> _errors = new List<string>(10000);
+        public static DateTime LastFlush = DateTime.Now;
+
+        // NB! replace with nlog! this will potentially lose the last 5 seconds of errors, just putting this in here for now as a hacky source of debug info
+
+        
+        public static void LogError(string url, Exception ex, string path)
+        {
+            // NB! this will cause problems at high concurrency!
+            string error = string.Format("ERROR {0} : {1} {2}", url, ex.Message, ex.InnerException != null ? ex.InnerException.Message : "");
+            _errors.Add(error);
+            if (DateTime.Now.Subtract(LastFlush).TotalSeconds>5)
+            {
+                LastFlush = DateTime.Now;
+                // NB! should check if file is locked! Will replace with nlog so don't want to gold plate this.
+                File.AppendAllLines(path, _errors.ToArray());
+                _errors.Clear();
+            }
         }
 
 
@@ -122,26 +148,6 @@ namespace Gunner.Engine
             int len = _urls.Length;
             return _urls[i%len];
         }
-
-        // where's that library that makes sending paramters to console apps easy?
-        // kinda like a command line arguments model binder?
-        // ---------
-        // todo:
-        // setup perfmon again, check the rps!
-        // - write to logfile
-        // - ability to co-ordinate requests from another machine (listen on port, self hosted)
-        // - add in console command line arguments support, move to console application
-        // - consider edge cases?
-        // - format string in app.config
-        // - xcopy deploy?
-        // - graceful fail (wrap whole thing in try catch?) 
-        // -
-        // load onto one of the test servers
-        // hit dev (find dev end point)
-        // watch dropwizard endpoint
-        // ability to inject a "story" script from linqpad, i.e. use linqpad to edit the lambda that gets passed to the 
-        // test "runner". 
-        // 
     }
 
 }

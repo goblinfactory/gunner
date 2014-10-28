@@ -1,1 +1,1 @@
-Gunner -l "mock-counter.log" -t 10000 -p 5000 -r 100 -s 100 -i 50 -n "allergenName" -o "htpp://localhost:8082/" -u "small1.json,large1.json,small2.json,large2.json,small3.json,large3.json,small4.json,large4.json"
+Gunner  -l "mock-counter.log" -s 10 -e 50 -r 200 -p 1000 -i 1 -n "latitude" -w "http://localhost:8082/" -u "small1.json,large1.json,small2.json,large2.json,small3.json,large3.json,small4.json,large4.json"

@@ -40,7 +40,7 @@ namespace Gunner.Console
                 var path = Path.Combine(Environment.CurrentDirectory, options.Logfile);
                 console.WriteLine("env:{0} | logfile:{1} | path:{2}", Environment.CurrentDirectory, options.Logfile, path);
                 File.Create(path).Close();
-                options.LogPath = path;
+                options.Logfile = path;
             }
             var mg = new MachineGun(options);
             mg.Run();                

@@ -11,6 +11,11 @@ namespace Gunner.Engine
             HelpText = "relative path to a csv file containing urls to request.")]
         public string Csv { get; set; }
 
+        [Option('b', "logerrors", DefaultValue = false,
+            HelpText = "Whether to log errors or not. If you have errors, to reproduce just do a single run with 1 user afterwards with repeat set to = max urls in your csv file.")]
+        public bool LogErrors { get; set; }
+
+
         [Option('c', "cachebuster", DefaultValue = true,
             HelpText = "Whether to append a cachebuster string to the end of your url or not.")]
         public bool Cachebuster { get; set; }
@@ -41,12 +46,7 @@ namespace Gunner.Engine
            HelpText = "Name of logfile, optional relative path. Will use path of local execution. Will overwrite file if already exists, will create if not.")]
         public string Logfile { get; set; }
 
-        public string LogPath { get; set; }
-
-        [Option('m', "timeout", DefaultValue = 600,
-            HelpText = "Test timeout. Maximum time (in seconds) allowed for each (up to the final batch) to all return. (not yet done any decent reporting for when this happens. TODO)")]
-        public int Timeout { get; set; }
-
+        //public string LogPath { get; set; }
 
         [Option('n', "find", Required = true,
             HelpText = "String to search for that must be returned in the body of the response, that confirms the request was valid.")]
@@ -64,6 +64,9 @@ namespace Gunner.Engine
             HelpText = "Number of concurrent users to start with. Gunner will start with this value (s), run tests up until (u), incrementing in steps of (i) ")]
         public int Start { get; set; }
 
+        [Option('t', "timeout", DefaultValue = 600,
+            HelpText = "Test timeout. Maximum time (in seconds) allowed for each (up to the final batch) to all return. (not yet done any decent reporting for when this happens. TODO)")]
+        public int Timeout { get; set; }
 
         //public string[] Urls
         //{

@@ -20,7 +20,11 @@ namespace Gunner.Console
             catch (Exception ex)
             {
                 console.WriteLine("Error occurred, stopping.");
-                console.WriteLine("Error was:{0}", ex.Message);
+                
+                if (ex.InnerException!=null)
+                    console.WriteLine("Error was:{0}",ex.InnerException.Message);
+                else
+                    console.WriteLine("Error was:{0}", ex.Message);
             }
 
         }

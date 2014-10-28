@@ -2,8 +2,9 @@ Gunner
 ====
 
 Gunner is a proof of concept command line Load test tool for windows to rapid fire requests against a test or pre-production server. 
-A high goal of Gunner is to have a small memory footprint and allow for rapid testing of high concurrency on available commodity hardware, requiring fewer test servers when trying to fire enough requests at a server or cluster, to get a rough idea on sytem and infrastructure performance and capacity. 
+A design goal from the outset was to have as small a memory and cpu usage footprint as possible when high concurrency load testing, requiring fewer test servers when trying to fire enough requests at a server or cluster, to get a rough idea on sytem and infrastructure performance and capacity. 
 Existing testing tools require very many test servers to be able to simulate a large load, increasing the number of concurrent users that can be simulated, on a per (test server) basis will reduce the number of test servers (clients, or injectors), needed to get meaningful results.
+
 Compatibility:
 ---
 - .NET Framework 4.5+
@@ -16,16 +17,17 @@ Current Release:
 
 At a glance:
 ---
-- One line API load testing
-- Low memory footprint (tbd)
-- High concurrency (tbd)
+- xcopy deployable.
+- Currently similar to curl. (this poc.) 
+- One line server load testing
+- Low memory footprint (needs data.)
+- High concurrency (needs data.)
 - Easy to use, get up and running and testing, in seconds.
 - Use as a simple diagnostic tool to quickly identify network bottlenecks and test NFR's. (needs example)
 - Envisage usage could be to keep a server idling warm or hot while journey testing is done using Selenium, Watin, Jmeter or other test tool, or manual testing.
-- For testing simple API's : only supports GET, and no authentication. 
-- No support for cookies
-- Not a replacement for journey testing or website testing.
-
+- For testing simple API's : currently only supports GET, and no authentication. (Oauth in backlog)
+- No support for cookies. (on backlog to add)
+- Design goal is to be extendable to be able to be used to load test "user journeys".
 
 Quickstart
 ----------
@@ -65,7 +67,7 @@ Gunner runs and outputs the following:
 - Average response time per request. 
  - This includes network latency so when testing server should be done within the same vlan as close to the server as possible, unless you're deliberately testing further away, in which case the difference between the different tests is very valuable.
 
-Notes:
+Notes and known issues:
 ---
 __**Gunner currently reports different values to what system performance monitors report, specifically the requests per second.**__ This may or may not be correct, despite the apparent contradiction. I am busy investigating further. I am manually testing by running the following on the command line of the windows server I'm hitting;
 
@@ -107,7 +109,7 @@ Immediate Current work
 	Then the webserver should report similar requests per second within an acceptable tolerance  
 ```
 
- - CSV input of urls. If any of the urls passed is a file, then url values will be read from the file. One value per line.
+ - CSV input of urls. If any of the urls passed is a file, then url values will be read from the file. Two values per line -> url, find
  
 
 Roadmap (high priority ideas)
@@ -118,6 +120,8 @@ Roadmap (high priority ideas)
 
 Idea backlog (unsorted)
 ---
+  - __authentication__ oauth, forms, and custom headers, so that can be used for journey testing.
+  - __cookies,other verbs, test state keyval store, body post__, so that can easily be used for journey testing.
   - __nlog__ (would allow for logging to be configured and output to Elastic Search, which would allow using ELK to investigate bigger data sets, e.g. when doing a root cause analysis.)
   - __Linqpad version__ (i.e. make it available as a linqpad script.) So that it can be used in more high security scenarios where all software and tools used on servers have to be reviewed by an appropriate admin. 
   - __package as a single exe__, so that you more easily copy and run on a machine.

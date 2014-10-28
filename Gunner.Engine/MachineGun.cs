@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,6 +72,36 @@ namespace Gunner.Engine
         static int success = 0;
         static int fail = 0;
 
+        public static async Task GetUrlAsync(int requests, HttpClient client, Func<int,bool, string> nextString, string find, bool verbose, int verboseMessagesToShow, bool cachebust)
+        {
+            int i = requests - 1;
+            if (requests == 0) return;
+            var url = nextString(i,cachebust);
+            Interlocked.Increment(ref batchRequests);
+            Interlocked.Increment(ref totalRequests);
+            try
+            {
+                bool verbosed = (verbose && totalRequests < verboseMessagesToShow);
+                var result = await client.GetStringAsync(url);
+                if (verbosed) Console.WriteLine(result);
+                if (result.Contains(find))
+                    Interlocked.Increment(ref success);
+                else
+                {
+                    //todo replace with single line view, remove carriage returns.
+                    if (verbosed) Console.WriteLine("could not find '{0}' in result: {1}",find,result.First(25));
+                    Interlocked.Increment(ref fail);
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                Interlocked.Increment(ref fail);
+                if (verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine("EXCEPTION:{0}", ex.Message);
+                throw;
+            }
+        }
+
 
         static void TestCocurrentRequests(Options options,int users, int repeat)
         {
@@ -82,45 +113,14 @@ namespace Gunner.Engine
             sw.Start();
             for (int i = 0; i < users; i++)
             {
-
-                // do a parallel.foreach inside each task ;-D
-                var task = new Task(() =>
-                {
-                    string cachebuster = options.Cachebuster ? "?buster=" + Guid.NewGuid().ToString() : "";
-                        
-                    var client = new System.Net.WebClient();
-                    for (int b = 0; b < repeat; b++)
-                    {
-                        var url = GetUrl(b) + cachebuster;
-                        string result = "";
-                        try
-                        {
-                            Interlocked.Increment(ref batchRequests);
-                            Interlocked.Increment(ref totalRequests);
-                            result = client.DownloadString(url);
-                            if (options.Verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine(result);
-                            if (result.Contains(options.Find)) 
-                                Interlocked.Increment(ref success);
-                            else
-                                Interlocked.Increment(ref fail);
-                        }
-                        catch (Exception ex)
-                        {
-                            Interlocked.Increment(ref fail);
-                            if (options.Verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine("EXCEPTION:{0}", ex.Message);
-                        }
-                    }
-
-                });
+                var client = new HttpClient();
+                var task = GetUrlAsync(repeat, client, GetUrl, options.Find, options.Verbose, VerboseMessagesToShow,options.Cachebuster);
                 tasks.Add(task);
-                task.Start();
             }
-            // this will block
             Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
             sw.Stop();
             float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000;
             float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
-            // this is not actually waiting for all threads??
             //todo: move to logging class
             string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);
             Console.WriteLine(logline);
@@ -128,11 +128,13 @@ namespace Gunner.Engine
             if(options.LogPath!=null) File.AppendAllLines(options.LogPath, new []{ logline});
         }
 
+
         private static string[] Urls;
 
         // to do, convert to a class, and store an instance of the class into a static
-        private static string GetUrl(int i)
+        private static string GetUrl(int i, bool cachebust)
         {
+            string cachebuster = cachebust ? "?buster=" + Guid.NewGuid().ToString() : "";
             int len = Urls.Length;
             return Urls[i%len];
         }

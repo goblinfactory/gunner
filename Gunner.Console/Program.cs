@@ -38,7 +38,6 @@ namespace Gunner.Console
             if (!string.IsNullOrWhiteSpace(options.Logfile))
             {
                 var path = Path.Combine(Environment.CurrentDirectory, options.Logfile);
-                console.WriteLine("env:{0} | logfile:{1} | path:{2}", Environment.CurrentDirectory, options.Logfile, path);
                 File.Create(path).Close();
                 options.Logfile = path;
             }

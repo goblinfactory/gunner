@@ -38,6 +38,11 @@ namespace Gunner.Engine
             HelpText = "Test results format string. Please keep the sequence the same, otherwise headers wont match and,or, automated log reporting can fail.")]
         public string Format { get; set; }
 
+        [Option('g', "gap", DefaultValue = 100,
+    HelpText = "Pause (gap) between each request.")]
+        public int Gap { get; set; }
+
+
         [Option('i', "increment", DefaultValue = 50,
             HelpText = "Number of concurrent users to increase each test by.")]
         public int Increment { get; set; }

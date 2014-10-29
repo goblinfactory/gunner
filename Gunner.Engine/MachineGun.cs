@@ -44,7 +44,7 @@ namespace Gunner.Engine
             }
             for (int batch =  _options.Start; batch < _options.Users; batch += _options.Increment)
             {
-                TestCocurrentRequests(_options, batch,_options.Repeat);
+                TestCocurrentRequests(_options, batch,_options.Repeat,_options.Gap);
                 Thread.Sleep(_options.Pause);
             }
             Console.WriteLine("Total requests:{0}",totalRequests);
@@ -57,8 +57,18 @@ namespace Gunner.Engine
         static int fail = 0;
 
 
-        public static void Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+        public class DownloadResult
         {
+            public int? ErrorCode { get; set;  }
+            /// <summary>
+            /// result was 2xx and result string contained correct match.
+            /// </summary>
+            public bool Success { get; set; }
+        }
+
+        public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+        {
+            var dr = new DownloadResult();
             try
             {
                 bool verbosed = (verbose && totalRequests < verboseMessagesToShow);
@@ -67,50 +77,78 @@ namespace Gunner.Engine
                 Interlocked.Increment(ref totalRequests);
                 if (verbosed) Console.WriteLine(result);
                 if (result.Contains(find))
-                    Interlocked.Increment(ref success);
-                else
                 {
-                    //todo replace with single line view, remove carriage returns.
-                    if (verbosed) Console.WriteLine("could not find '{0}' in result: {1}", find, result.First(25));
-                    Interlocked.Increment(ref fail);
+                    dr.Success = true;
+                    Interlocked.Increment(ref success);
+                    return dr;
                 }
+                dr.Success = false;
+                Interlocked.Increment(ref fail);
+                return dr;
+            }
+            catch (WebException we)
+            {
+                Interlocked.Increment(ref fail);
+                if (logErrors) LogError(url, we, logPath);
+                dr.Success = false;
+
+                if (we.Status == WebExceptionStatus.ProtocolError)
+                {
+                    var response = we.Response as HttpWebResponse;
+                    if (response != null)
+                    {
+                        dr.ErrorCode = (int)response.StatusCode;
+                    }
+                }
+                if (logErrors) LogError(url, we, logPath);
+                return dr;
             }
             catch (Exception ex)
             {
                 Interlocked.Increment(ref fail);
-                if (verbose && totalRequests < VerboseMessagesToShow) Console.WriteLine("EXCEPTION:{0}", ex.Message);
-                 if (logErrors) LogError(url, ex, logPath);
+                if (logErrors) LogError(url, ex, logPath);
+                dr.Success = false;
+                return dr;
             }
         }
 
-        static void TestCocurrentRequests(Options options,int users, int repeat)
+        //http://msdn.microsoft.com/en-gb/library/jj155756.aspx
+        static async void TestCocurrentRequests(Options options,int users, int repeat, int pauseBetweenRequests)
         {
             batchRequests = 0;
             success = 0;
             fail = 0;
             var tasks = new List<Task>();
             var sw = new Stopwatch();
+            
             sw.Start();
-
             for (int i = 0; i < users; i++)
             {
-                var task = Task.Run(() =>
+                Task<BatchResult> task = Task.Run( async () =>
                     {
+                        var batch = new BatchResult();
                         var client = new WebClient();
+                        
                         for (int r = 0; r < repeat; r++)
                         {
                             var url = GetUrl(r, options.Cachebuster);
                             Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                         }
+                        await Task.Delay(pauseBetweenRequests);
+                        return batch;
                     });
-
                 tasks.Add(task);
             }
-            
-            Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
+            // Sum the batch results!
+
+            //Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
+            tasks.ForEach( t =>
+                {
+                    
+                });
 
             sw.Stop();
-            float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000;
+            float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000; 
             float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
             //todo: move to logging class
             string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);

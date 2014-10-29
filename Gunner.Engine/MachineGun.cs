@@ -51,7 +51,46 @@ namespace Gunner.Engine
             Console.WriteLine("-------- finished ---------");
         }
 
-        public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+        public static async Task<DownloadResult> DownloadAsync(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+        {
+            var dr = new DownloadResult();
+            try
+            {
+                var result = await client.DownloadStringTaskAsync(url);
+                if (result.Contains(find))
+                {
+                    dr.Success = true;
+                    return dr;
+                }
+                dr.Success = false;
+                return dr;
+            }
+            catch (WebException we)
+            {
+                if (logErrors) LogError(url, we, logPath);
+                dr.Success = false;
+
+                if (we.Status == WebExceptionStatus.ProtocolError)
+                {
+                    var response = we.Response as HttpWebResponse;
+                    if (response != null)
+                    {
+                        dr.ErrorCode = (int)response.StatusCode;
+                    }
+                }
+                if (logErrors) LogError(url, we, logPath);
+                return dr;
+            }
+            catch (Exception ex)
+            {
+                if (logErrors) LogError(url, ex, logPath);
+                dr.Success = false;
+                return dr;
+            }
+        }
+
+
+        public static DownloadResult DownloadOld(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
         {
             var dr = new DownloadResult();
             try
@@ -106,7 +145,7 @@ namespace Gunner.Engine
                         for (int r = 0; r < repeat; r++)
                         {
                             var url = GetUrl(r, options.Cachebuster);
-                            var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                            var dr = await DownloadAsync(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                             batchResult.UpdateTotals(dr);
                             if (pauseBetweenRequests>0) await Task.Delay(pauseBetweenRequests);
                         }

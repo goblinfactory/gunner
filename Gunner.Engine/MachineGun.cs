@@ -57,14 +57,6 @@ namespace Gunner.Engine
         static int fail = 0;
 
 
-        public class DownloadResult
-        {
-            public int? ErrorCode { get; set;  }
-            /// <summary>
-            /// result was 2xx and result string contained correct match.
-            /// </summary>
-            public bool Success { get; set; }
-        }
 
         public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
         {
@@ -112,7 +104,7 @@ namespace Gunner.Engine
             }
         }
 
-        //http://msdn.microsoft.com/en-gb/library/jj155756.aspx
+        // pause betweenRequests can be used to simulate network latency
         static async void TestCocurrentRequests(Options options,int users, int repeat, int pauseBetweenRequests)
         {
             batchRequests = 0;
@@ -124,22 +116,25 @@ namespace Gunner.Engine
             sw.Start();
             for (int i = 0; i < users; i++)
             {
-                Task<BatchResult> task = Task.Run( async () =>
+                Task<UserRunResult> task = Task.Run( async () =>
                     {
-                        var batch = new BatchResult();
+                        var batch = new UserRunResult();
                         var client = new WebClient();
                         
                         for (int r = 0; r < repeat; r++)
                         {
                             var url = GetUrl(r, options.Cachebuster);
-                            Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                            var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                            batch.UpdateTotals(dr);
+                            await Task.Delay(pauseBetweenRequests);
                         }
-                        await Task.Delay(pauseBetweenRequests);
                         return batch;
                     });
                 tasks.Add(task);
             }
             // Sum the batch results!
+
+            //NB! do while no more users waiting to finish to WhenAny?? tally the batch totals!  (BatchTotal to derive from UserTotal )
 
             //Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
             tasks.ForEach( t =>
@@ -148,6 +143,8 @@ namespace Gunner.Engine
                 });
 
             sw.Stop();
+
+            // Move to a status class
             float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000; 
             float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
             //todo: move to logging class

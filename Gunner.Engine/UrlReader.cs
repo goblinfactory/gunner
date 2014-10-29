@@ -56,7 +56,11 @@ namespace Gunner.Engine
             if (!File.Exists(path)) throw new FileNotFoundException("Could not find csv file:" + path);
             try
             {
-                urlList = File.ReadAllLines(path).Select(u=> string.Format("{0}{1}",_uriRoot,Bust(u))).ToArray();
+                urlList = File
+                    .ReadAllLines(path)
+                    .Select(u=> u.Trim())
+                    .Where(u=> !string.IsNullOrWhiteSpace(u))
+                    .Select(u=> string.Format("{0}{1}",_uriRoot,Bust(u))).ToArray();
             }
             catch (Exception ex)
             {

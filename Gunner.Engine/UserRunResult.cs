@@ -13,7 +13,7 @@ namespace Gunner.Engine
             _statuses = new Dictionary<int, int>();
         }
 
-        private Dictionary<int,int> _statuses { get; set; }
+        protected virtual Dictionary<int,int> _statuses { get; set; }
         public int Success { get; set; }
         public int Fail { get; set; }
 
@@ -34,11 +34,11 @@ namespace Gunner.Engine
 
     public static class DictionaryHelper
     {
-        public static void Increment(this Dictionary<int, int> dictionary, int key)
+        public static void Increment(this Dictionary<int, int> dictionary, int key, int increment = 1)
         {
             int i;
             dictionary.TryGetValue(key, out i);
-            dictionary[key] = i + 1;
+            dictionary[key] = i + increment;
         }
     }
 
@@ -46,6 +46,10 @@ namespace Gunner.Engine
     {
         public int Code { get; set; }
         public int Count { get; set; }
+        public override string ToString()
+        {
+            return string.Format("http-{0}:{1}", Code, Count);
+        }
     }
 
     public class DownloadResult

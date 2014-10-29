@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchRunResult.cs" />
     <Compile Include="UserRunResult.cs" />
     <Compile Include="MachineGun.cs" />
     <Compile Include="Options.cs" />

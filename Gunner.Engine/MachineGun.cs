@@ -110,7 +110,7 @@ namespace Gunner.Engine
             batchRequests = 0;
             success = 0;
             fail = 0;
-            var tasks = new List<Task>();
+            var tasks = new List<Task<UserRunResult>>();
             var sw = new Stopwatch();
             
             sw.Start();
@@ -118,17 +118,17 @@ namespace Gunner.Engine
             {
                 Task<UserRunResult> task = Task.Run( async () =>
                     {
-                        var batch = new UserRunResult();
+                        var batchResult = new UserRunResult();
                         var client = new WebClient();
                         
                         for (int r = 0; r < repeat; r++)
                         {
                             var url = GetUrl(r, options.Cachebuster);
                             var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
-                            batch.UpdateTotals(dr);
+                            batchResult.UpdateTotals(dr);
                             await Task.Delay(pauseBetweenRequests);
                         }
-                        return batch;
+                        return batchResult;
                     });
                 tasks.Add(task);
             }
@@ -137,10 +137,16 @@ namespace Gunner.Engine
             //NB! do while no more users waiting to finish to WhenAny?? tally the batch totals!  (BatchTotal to derive from UserTotal )
 
             //Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
-            tasks.ForEach( t =>
-                {
-                    
-                });
+            var batch = new BatchRunResult();
+            while (tasks.Count() > 0)
+            {
+                //no locking requires since userResult will never "finish" twice!  w00t! love this pattern...
+                //Q: does this block my cancellation in this loop?
+                Task<UserRunResult> userResultTask = await Task.WhenAny(tasks);
+                tasks.Remove(userResultTask);
+                var userResult = await userResultTask;
+                batch.UpdateTotals(userResult);
+            }
 
             sw.Stop();
 
@@ -149,9 +155,10 @@ namespace Gunner.Engine
             float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
             //todo: move to logging class
             string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);
-            Console.WriteLine(logline);
+            Console.Write(logline);
+            Console.WriteLine(" {0}",batch);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
-            if (options.Logfile != null) File.AppendAllLines(options.Logfile, new[] { logline });
+            if (options.Logfile != null) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
         }
 
         public static List<string> _errors = new List<string>(10000);

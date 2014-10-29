@@ -61,12 +61,12 @@ namespace Gunner.Engine
                     .Select(u=> u.Trim())
                     .Where(u=> !string.IsNullOrWhiteSpace(u))
                     .Select(u=> string.Format("{0}{1}",_uriRoot,Bust(u))).ToArray();
+                return urlList;
             }
             catch (Exception ex)
             {
                 throw new Exception("Could not parse url list from :" + path + ". Errror was:" + ex.Message);
             }
-            return urlList;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Gunner.Engine
 {
     public class BatchRunResult : UserRunResult {
+
         public void UpdateTotals(UserRunResult ur)
         {
             Success += ur.Success;
@@ -18,6 +19,5 @@ namespace Gunner.Engine
             var textview = string.Join(", ", GetStatuses().Select(s => s.ToString()));
             return textview;
         }
-    //NB! will need a unit test for capturing multiple http error status codes.
     }
 }

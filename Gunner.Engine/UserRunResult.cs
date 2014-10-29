@@ -16,6 +16,10 @@ namespace Gunner.Engine
         protected virtual Dictionary<int,int> _statuses { get; set; }
         public int Success { get; set; }
         public int Fail { get; set; }
+        public int Total
+        {
+            get { return Success + Fail; }            
+        }
 
         public void UpdateTotals(DownloadResult dr)
         {

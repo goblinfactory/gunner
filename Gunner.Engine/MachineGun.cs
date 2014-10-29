@@ -47,40 +47,26 @@ namespace Gunner.Engine
                 TestCocurrentRequests(_options, batch,_options.Repeat,_options.Gap);
                 Thread.Sleep(_options.Pause);
             }
-            Console.WriteLine("Total requests:{0}",totalRequests);
+            //Console.WriteLine("Total requests:{0}",totalRequests);
             Console.WriteLine("-------- finished ---------");
         }
-
-        static int totalRequests = 0;
-        static int batchRequests = 0;
-        static int success = 0;
-        static int fail = 0;
-
-
 
         public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
         {
             var dr = new DownloadResult();
             try
             {
-                bool verbosed = (verbose && totalRequests < verboseMessagesToShow);
                 var result = client.DownloadString(url);
-                Interlocked.Increment(ref batchRequests);
-                Interlocked.Increment(ref totalRequests);
-                if (verbosed) Console.WriteLine(result);
                 if (result.Contains(find))
                 {
                     dr.Success = true;
-                    Interlocked.Increment(ref success);
                     return dr;
                 }
                 dr.Success = false;
-                Interlocked.Increment(ref fail);
                 return dr;
             }
             catch (WebException we)
             {
-                Interlocked.Increment(ref fail);
                 if (logErrors) LogError(url, we, logPath);
                 dr.Success = false;
 
@@ -97,7 +83,6 @@ namespace Gunner.Engine
             }
             catch (Exception ex)
             {
-                Interlocked.Increment(ref fail);
                 if (logErrors) LogError(url, ex, logPath);
                 dr.Success = false;
                 return dr;
@@ -107,9 +92,6 @@ namespace Gunner.Engine
         // pause betweenRequests can be used to simulate network latency
         static async void TestCocurrentRequests(Options options,int users, int repeat, int pauseBetweenRequests)
         {
-            batchRequests = 0;
-            success = 0;
-            fail = 0;
             var tasks = new List<Task<UserRunResult>>();
             var sw = new Stopwatch();
             
@@ -126,7 +108,7 @@ namespace Gunner.Engine
                             var url = GetUrl(r, options.Cachebuster);
                             var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                             batchResult.UpdateTotals(dr);
-                            await Task.Delay(pauseBetweenRequests);
+                            if (pauseBetweenRequests>0) await Task.Delay(pauseBetweenRequests);
                         }
                         return batchResult;
                     });
@@ -143,22 +125,24 @@ namespace Gunner.Engine
                 //no locking requires since userResult will never "finish" twice!  w00t! love this pattern...
                 //Q: does this block my cancellation in this loop?
                 Task<UserRunResult> userResultTask = await Task.WhenAny(tasks);
-                tasks.Remove(userResultTask);
                 var userResult = await userResultTask;
+                tasks.Remove(userResultTask);
                 batch.UpdateTotals(userResult);
             }
+
 
             sw.Stop();
 
             // Move to a status class
-            float rps = ((float)batchRequests / sw.ElapsedMilliseconds) * 1000; 
-            float averesponse = (float)sw.ElapsedMilliseconds / (float)batchRequests;
+            int total = batch.Total;
+            float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
+            float averesponse = 1F/rps; 
             //todo: move to logging class
-            string logline = string.Format(options.Format, DateTime.Now, totalRequests, rps, users, success, fail, averesponse);
+            string logline = string.Format(options.Format, DateTime.Now, total, rps, users, batch.Success, batch.Fail, averesponse);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
-            if (options.Logfile != null) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
+            if (!string.IsNullOrWhiteSpace(options.Logfile)) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
         }
 
         public static List<string> _errors = new List<string>(10000);

@@ -1,1 +1,1 @@
-Gunner.Console\bin\debug\gunner.exe --start 50 --end 500 -i 100 -r 5 -w http://localhost:8082/ -n latitude -a files.txt -g 0
+Gunner.Console\bin\debug\gunner.exe --start 1 --end 10 -i 1 -p 0 -r 100 -w http://localhost:8082/ -n latitude -a files.txt -g 0

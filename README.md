@@ -20,8 +20,8 @@ At a glance:
 - xcopy deployable.
 - Currently similar to curl. (this poc.) 
 - One line server load testing
-- Low memory footprint (needs data.)
-- High concurrency (needs data.)
+- Low memory footprint (500 users at only 40Mb memory footprint.)
+- High concurrency ...ish! [ still need to improve.] (currently at about 500 rps when running everything on one machine, vm + gunner + IIS.)
 - Easy to use, get up and running and testing, in seconds.
 - Use as a simple diagnostic tool to quickly identify network bottlenecks and test NFR's. (needs example)
 - Envisage usage could be to keep a server idling warm or hot while journey testing is done using Selenium, Watin, Jmeter or other test tool, or manual testing.

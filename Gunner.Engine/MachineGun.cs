@@ -44,7 +44,7 @@ namespace Gunner.Engine
             }
             var startMemory = MemoryHelper.GetPeakWorkingSetKb();
             int grandTotal = 0;
-            for (int batch =  _options.Start; batch < _options.Users; batch += _options.Increment)
+            for (int batch =  _options.Start; batch <= _options.Users; batch += _options.Increment)
             {
                 int total = await TestCocurrentRequests(grandTotal, startMemory,_options, batch, _options.Repeat, _options.Gap);
                 grandTotal += total;

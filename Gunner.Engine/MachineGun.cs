@@ -90,7 +90,6 @@ namespace Gunner.Engine
             }
         }
 
-
         public static DownloadResult DownloadOld(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
         {
             var dr = new DownloadResult();
@@ -148,7 +147,7 @@ namespace Gunner.Engine
                         for (int r = 0; r < repeat; r++)
                         {
                             var url = GetUrl(r, options.Cachebuster);
-                            var dr = await DownloadAsync(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                            var dr =  DownloadOld(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                             batchResult.UpdateTotals(dr);
                             if (pauseBetweenRequests>0) await Task.Delay(pauseBetweenRequests);
                         }

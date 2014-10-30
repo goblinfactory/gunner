@@ -25,9 +25,9 @@ namespace Gunner.Engine
         public string Delimiter { get; set; }
 
 
-        public const string DefaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms";
-                                          //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms
-        public const string DefaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response";
+        public const string DefaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms ({7,7:0.0}Mb used)";
+                                          //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms (   77.3Mb used)
+        public const string DefaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--------Mb used";
 
         [Option('e', "end", DefaultValue = 500,
             HelpText = "Total number of simultaneous user connections (parallel connections) that the tests will attempt to ramp up to.")]

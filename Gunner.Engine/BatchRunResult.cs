@@ -8,6 +8,8 @@ namespace Gunner.Engine
 {
     public class BatchRunResult : UserRunResult {
 
+        public decimal MemoryUsedMb { get; set; }
+        
         public void UpdateTotals(UserRunResult ur)
         {
             Success += ur.Success;

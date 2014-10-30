@@ -42,9 +42,10 @@ namespace Gunner.Engine
                 _urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
                 Console.WriteLine("---------------------------");
             }
+            var startMemory = MemoryHelper.GetPeakWorkingSetKb();
             for (int batch =  _options.Start; batch < _options.Users; batch += _options.Increment)
             {
-                TestCocurrentRequests(_options, batch,_options.Repeat,_options.Gap);
+                TestCocurrentRequests(startMemory,_options, batch, _options.Repeat, _options.Gap);
                 Thread.Sleep(_options.Pause);
             }
             //Console.WriteLine("Total requests:{0}",totalRequests);
@@ -129,8 +130,10 @@ namespace Gunner.Engine
         }
 
         // pause betweenRequests can be used to simulate network latency
-        static async void TestCocurrentRequests(Options options,int users, int repeat, int pauseBetweenRequests)
+        static async void TestCocurrentRequests(decimal MbStart, Options options,int users, int repeat, int pauseBetweenRequests)
         {
+            var batch = new BatchRunResult();
+
             var tasks = new List<Task<UserRunResult>>();
             var sw = new Stopwatch();
             
@@ -158,8 +161,7 @@ namespace Gunner.Engine
             //NB! do while no more users waiting to finish to WhenAny?? tally the batch totals!  (BatchTotal to derive from UserTotal )
 
             //Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
-            var batch = new BatchRunResult();
-            while (tasks.Count() > 0)
+            while (tasks.Any())
             {
                 //no locking requires since userResult will never "finish" twice!  w00t! love this pattern...
                 //Q: does this block my cancellation in this loop?
@@ -168,16 +170,14 @@ namespace Gunner.Engine
                 tasks.Remove(userResultTask);
                 batch.UpdateTotals(userResult);
             }
-
-
             sw.Stop();
-
+            batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb()-MbStart;
             // Move to a status class
             int total = batch.Total;
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
             float averesponse = 1F/rps; 
             //todo: move to logging class
-            string logline = string.Format(options.Format, DateTime.Now, total, rps, users, batch.Success, batch.Fail, averesponse);
+            string logline = string.Format(options.Format, DateTime.Now, total, rps, users, batch.Success, batch.Fail, averesponse, batch.MemoryUsedMb);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.

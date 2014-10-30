@@ -24,10 +24,10 @@ namespace Gunner.Engine
            HelpText = "Character delimiter for lists. If you want to use a | then you will need to enclose any values containing a pipe with quotes (\")")]
         public string Delimiter { get; set; }
 
-
-        public const string DefaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms ({7,7:0.0}Mb used)";
-                                          //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms (   77.3Mb used)
-        public const string DefaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--------Mb used";
+        //TODO: create default formats for each of the columns, then let user select columns?
+        public const string DefaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms,{7,7:0.00}Mb, {8,7:0.00}Mb, ({9,7:0.0}Mb ram)";
+                                          //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms,   0.00Mb,    0.00Mb, (   20.7Mb ram)
+        public const string DefaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--MB (in),---MB(out),---------MB(RAM)";
 
         [Option('e', "end", DefaultValue = 500,
             HelpText = "Total number of simultaneous user connections (parallel connections) that the tests will attempt to ramp up to.")]

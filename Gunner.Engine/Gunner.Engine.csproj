@@ -53,6 +53,7 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="UrlReader.cs" />
     <Compile Include="WebClientGun.cs" />
+    <Compile Include="WebHeaderCollectionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

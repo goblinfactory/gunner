@@ -9,7 +9,19 @@ namespace Gunner.Engine
     public class BatchRunResult : UserRunResult {
 
         public decimal MemoryUsedMb { get; set; }
-        
+
+        public long NetworkBytesSent { get; set; }
+        public long NetworkBytesRecieved { get; set; }
+
+        public decimal NetworkMBSent
+        {
+            get { return (decimal) NetworkBytesSent/1048576; }
+        }
+        public decimal NetworkMBRecieved
+        {
+            get { return (decimal)NetworkBytesRecieved / 1048576; }
+        }
+
         public void UpdateTotals(UserRunResult ur)
         {
             Success += ur.Success;

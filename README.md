@@ -18,6 +18,7 @@ Current Release:
 At a glance:
 ---
 - xcopy deployable.
+- For now, only supports IPv4 and one NIC _(techie stuff -> If more than 1 nic or uses the first one of )_
 - Currently similar to curl. (this poc.) 
 - One line server load testing
 - Low memory footprint (500 users at only 40Mb memory footprint.)
@@ -101,7 +102,7 @@ Requirements
 Immediate Current work
 ---
  - Get tests results as accurate as is needed to be a useful tool. Possibly write an acceptance test, something along the lines of:
-
+ - show total network traffic.
 ```
 	Given gunner 
 	And a webserver
@@ -122,7 +123,8 @@ Roadmap (high priority ideas)
 
 Idea backlog (unsorted)
 ---
-  - __random seem__, so that random tests can be re-run with the same requests and timings. In case of unexpected clumping.
+  - __gzip__, gzip support? Add and test. ``client.Headers["Accept-Encoding"] = "gzip";``
+  - __random seed__, so that random tests can be re-run with the same requests and timings. In case of unexpected clumping.
   - __extend csv__, add extra fields to csv file, (url,verb,status,find,body)
   - __authentication__ oauth, forms, and custom headers, so that can be used for journey testing.
   - __cookies,other verbs, test state keyval store, body post__, so that can easily be used for journey testing.

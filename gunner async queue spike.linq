@@ -15,6 +15,9 @@
 
 void Main()
 {
+
+	// NB! also take a look at this great example:
+	// http://stackoverflow.com/questions/19431494/how-to-use-await-in-a-loop
 	var r = new Runner();
 	r.Run(20);
 	Console.WriteLine("press enter to finish.");
@@ -73,7 +76,7 @@ void Main()
             {
                     Task<int> firstFinishedTask = await Task.WhenAny(downloadTasks);
                     downloadTasks.Remove(firstFinishedTask);
-                    int length = await firstFinishedTask;
+                    int length = await firstFinishedTask;		
 					cnt++;
             }
 			Console.WriteLine("Requests:  {0}", cnt);

@@ -133,10 +133,9 @@ namespace Gunner.Engine
             }
             sw.Stop();
             batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb()-MbStart;
-            // Move to a status class
             int total = batch.Total;
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
-            float averesponse = 1F/rps; 
+            float averesponse = (1F/rps) *1000; 
             //todo: move to logging class
             string logline = string.Format(options.Format, DateTime.Now, total, rps, users, batch.Success, batch.Fail, averesponse, batch.MemoryUsedMb);
             Console.Write(logline);

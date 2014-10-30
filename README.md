@@ -66,9 +66,11 @@ Gunner runs and outputs the following:
 - Ave requests per second, averaged over each batch
 - Total count of success
 - Total count of fails
-- Average response time per request. 
+- Average response time (ms) per request. TTLB (time to last byte)
  - This includes network latency so when testing server should be done within the same vlan as close to the server as possible, unless you're deliberately testing further away, in which case the difference between the different tests is very valuable.
-
+- network traffic in megabytes recieved, on first ethernet card.
+- network traffic in megabytes sent, on first ethernet card.
+- Total ram that the journey scripts are using. Watch this figure when testing against large no of users.
 Notes and known issues:
 ---
 __**Gunner currently reports different values to what system performance monitors report, specifically the requests per second.**__ This may or may not be correct, despite the apparent contradiction. I am busy investigating further. I am manually testing by running the following on the command line of the windows server I'm hitting;

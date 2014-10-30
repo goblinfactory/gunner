@@ -21,13 +21,14 @@ At a glance:
 - Currently similar to curl. (this poc.) 
 - One line server load testing
 - Low memory footprint (500 users at only 40Mb memory footprint.)
-- High concurrency ...ish! [ still need to improve.] (currently at about 500 rps when running everything on one machine, vm + gunner + IIS.)
+- [High throughput ( tested > 7000 rps)](/PERFORMANCE.md)
+- High concurrency ( needs data. This was initially one of the drivers for writing gunner, to test concurrency, however RPS has since taken centre stage wrt priority. )
 - Easy to use, get up and running and testing, in seconds.
 - Use as a simple diagnostic tool to quickly identify network bottlenecks and test NFR's. (needs example)
 - Envisage usage could be to keep a server idling warm or hot while journey testing is done using Selenium, Watin, Jmeter or other test tool, or manual testing.
 - For testing simple API's : currently only supports GET, and no authentication. (Oauth in backlog)
 - No support for cookies. (on backlog to add)
-- Design goal is to be extendable to be able to be used to load test "user journeys".
+- Design goal is to be extendable to be able to be used to load test "user journeys", via Linqpad, as a fully fledged scripting IDE with intellisense and nuget support allowing you to write very simple journey scripts leveraging the power of RestSharp for full support to easily POST/PUT/GET/ADD complex entities to restful endpoints, oauth, basic authentication etc. (requires linqpad demo.)
 
 Quickstart
 ----------
@@ -116,10 +117,12 @@ Roadmap (high priority ideas)
 ---
 
  - Put in place decent test coverage, and CI server so that contributors can easily contribute. With decent tests in place, could then easily port to Java and other languages.
+ - Need to stagger requests, so that we don't have clumping when users all start requesting at once. (can reduce impact of this by ensuring users get random files.)
 
 
 Idea backlog (unsorted)
 ---
+  - __random seem__, so that random tests can be re-run with the same requests and timings. In case of unexpected clumping.
   - __extend csv__, add extra fields to csv file, (url,verb,status,find,body)
   - __authentication__ oauth, forms, and custom headers, so that can be used for journey testing.
   - __cookies,other verbs, test state keyval store, body post__, so that can easily be used for journey testing.
@@ -143,4 +146,4 @@ Alan Hemmings
   - goblinfactory AT gmail DOT com
   - [About.me](http://about.me/alanhemmings)
   - [www.goblinfactory.co.uk](http://www.goblinfactory.co.uk)
-  - [developer conferences at ski resorts](http://www.snowcode.com)
+  - [snowcode.com - developer conferences at ski resorts](http://www.snowcode.com)

@@ -24,7 +24,7 @@ namespace Gunner.Engine
         private const int VerboseMessagesToShow = 10;
         public const string Title = "Gunner v 0.1";
 
-        public void Run()
+        public async Task Run()
         {
             Console.WriteLine(Title);
             Console.WriteLine(Options.DefaultHeader);
@@ -43,12 +43,14 @@ namespace Gunner.Engine
                 Console.WriteLine("---------------------------");
             }
             var startMemory = MemoryHelper.GetPeakWorkingSetKb();
+            int grandTotal = 0;
             for (int batch =  _options.Start; batch < _options.Users; batch += _options.Increment)
             {
-                TestCocurrentRequests(startMemory,_options, batch, _options.Repeat, _options.Gap);
+                int total = await TestCocurrentRequests(grandTotal, startMemory,_options, batch, _options.Repeat, _options.Gap);
+                grandTotal += total;
                 Thread.Sleep(_options.Pause);
             }
-            //Console.WriteLine("Total requests:{0}",totalRequests);
+            Console.WriteLine("Total requests:{0}", grandTotal);
             Console.WriteLine("-------- finished ---------");
         }
 
@@ -91,7 +93,7 @@ namespace Gunner.Engine
         }
 
         // pause betweenRequests can be used to simulate network latency
-        static async void TestCocurrentRequests(decimal MbStart, Options options,int users, int repeat, int pauseBetweenRequests)
+        static async Task<int> TestCocurrentRequests(int grandTotal, decimal MbStart, Options options,int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult();
 
@@ -137,11 +139,12 @@ namespace Gunner.Engine
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
             float averesponse = (1F/rps) *1000; 
             //todo: move to logging class
-            string logline = string.Format(options.Format, DateTime.Now, total, rps, users, batch.Success, batch.Fail, averesponse, batch.MemoryUsedMb);
+            string logline = string.Format(options.Format, DateTime.Now, grandTotal + total, rps, users, batch.Success, batch.Fail, averesponse, batch.MemoryUsedMb);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
             if (!string.IsNullOrWhiteSpace(options.Logfile)) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
+            return total;
         }
 
         public static List<string> _errors = new List<string>(10000);

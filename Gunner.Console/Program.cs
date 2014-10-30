@@ -42,7 +42,9 @@ namespace Gunner.Console
                 options.Logfile = path;
             }
             var mg = new MachineGun(options);
-            mg.Run();                
+            //console.WriteLine("press 'q' to stop tests.");
+            Task.WaitAll(new[] {mg.Run()});
+
         }
 
     }

@@ -14,14 +14,27 @@ namespace Gunner.Engine
 {
     public class MachineGun
     {
+        public bool IsRunning { get; set; }
         private readonly Options _options;
-        private readonly INetworkTrafficMonitor _trafficMonitor;
+        private readonly IMetricMonitoring _metricMonitoring;
+        private readonly ITrafficMonitor _trafficMonitor;
+        private readonly ILogWriter _logWriter;
+        private List<BatchRunResult> _batchRunResults;
 
-        public MachineGun(Options options, INetworkTrafficMonitor trafficMonitor)
+        public List<BatchRunResult> ReadResults()
+        {
+            return _batchRunResults;
+        }
+
+        public MachineGun(Options options, IMetricMonitoring metricMonitoring, ITrafficMonitor trafficMonitor, ILogWriter logWriter)
         {
             _options = options;
+            _metricMonitoring = metricMonitoring;
             _trafficMonitor = trafficMonitor;
+            _logWriter = logWriter;
             _urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
+            IsRunning = false;
+            _batchRunResults = new List<BatchRunResult>();
         }
 
         private const int VerboseMessagesToShow = 10;
@@ -43,7 +56,7 @@ namespace Gunner.Engine
                 Console.WriteLine("------ test settings ------");
                 Console.WriteLine("{0} to {1} step {2}. \n{3} req's/user. {4}ms between batches.",
                 _options.Start,
-                _options.Users,
+                _options.End,
                 _options.Increment,
                 _options.Repeat,
                 _options.Pause);
@@ -54,13 +67,19 @@ namespace Gunner.Engine
             }
             var startMemory = MemoryHelper.GetPeakWorkingSetKb();
             int grandTotal = 0;
-            for (int batch =  _options.Start; batch <= _options.Users; batch += _options.Increment)
+            IsRunning = true;
+            var sw = new Stopwatch();
+            sw.Start();
+            for (int batch =  _options.Start; batch <= _options.End; batch += _options.Increment)
             {
-                int total = await TestCocurrentRequests(_trafficMonitor, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
-                grandTotal += total;
+                BatchRunResult batchResult = await TestCocurrentRequests(_metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
+                _batchRunResults.Add(batchResult);
+                grandTotal += batchResult.Total;
                 Thread.Sleep(_options.Pause);
             }
-            Console.WriteLine("Total requests:{0}", grandTotal);
+            sw.Stop();
+            IsRunning = false;
+            Console.WriteLine("Total requests:{0,7} - Total time:{1,7:0.00}s", grandTotal,(sw.ElapsedMilliseconds/1000M));
             Console.WriteLine("-------- finished ---------");
         }
 
@@ -103,7 +122,7 @@ namespace Gunner.Engine
         }
 
         // pause betweenRequests can be used to simulate network latency
-        static async Task<int> TestCocurrentRequests(INetworkTrafficMonitor network, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
+        static async Task<BatchRunResult> TestCocurrentRequests(IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult();
             network.StartMonitoring();
@@ -112,7 +131,7 @@ namespace Gunner.Engine
             var sw = new Stopwatch();
             
             sw.Start();
-            for (int i = 0; i < users; i++)
+            for (int i = 1; i < users+1; i++)
             {
                 Task<UserRunResult> task = Task.Run( async () =>
                     {
@@ -120,12 +139,14 @@ namespace Gunner.Engine
 
                         using (var client = new WebClient())
                         {
+                            // stagger
+                            await Task.Delay(new Random().Next(options.StaggerStart));
                             for (int r = 0; r < repeat; r++)
                             {
                                 var url = GetUrl(r, options.Cachebuster);
                                 var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                                 batchResult.UpdateTotals(dr);
-                                if (pauseBetweenRequests > 0) await Task.Delay(pauseBetweenRequests);
+                                if (pauseBetweenRequests > 0) await Task.Delay(new Random().Next(options.StaggerStart));
                             }                            
                         }
                         return batchResult;
@@ -146,12 +167,15 @@ namespace Gunner.Engine
             batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb() - MbStart;
             int total = batch.Total;
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
-            float averesponse = (1F/rps) *1000; 
+            float averesponse = (1F/rps) *1000;
+            batch.AverageResponseMs = averesponse;
+            batch.RequestsPerSecond = rps;
+            batch.Metrics = metricMonitoring.ReadMetrics();
             string logline = string.Format(options.Format, DateTime.Now, grandTotal + total, rps, users, batch.Success, batch.Fail, averesponse, batch.Traffic.ReceivedBytes.ToMegabytes(), batch.Traffic.SentBytes.ToMegabytes(), batch.MemoryUsedMb);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
-            if (!string.IsNullOrWhiteSpace(options.Logfile)) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
-            return total;
+            if (logWriter!=null) logWriter.AppendLine(logline + " " + batch);
+            return batch;
         }
 
         public static List<string> _errors = new List<string>(10000);

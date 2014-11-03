@@ -34,15 +34,20 @@ namespace Gunner.Console
             var options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
             if (options.Csv.HasText() && options.UrlList.HasText()) throw new ApplicationException("You cannot provide a value for csv as well as urls, only 1 option can be selected.");
-            if (options.Users > 5000) throw new ApplicationException("Maximum value atmo for users is 5000. This is due to socket connection limit. Later will detect if user can support more, if not show message how to tell OS you want more.");
+            if (options.End > 5000) throw new ApplicationException("Maximum value atmo for users is 5000. This is due to socket connection limit. Later will detect if user can support more, if not show message how to tell OS you want more.");
             if (!string.IsNullOrWhiteSpace(options.Logfile))
             {
                 var path = Path.Combine(Environment.CurrentDirectory, options.Logfile);
                 File.Create(path).Close();
                 options.Logfile = path;
             }
+            // for now I'm only monitoring local IIS 
+            // later will update to be able to monitor remote window servers, and as a bonus remote apache, jetty dropwizard etc.
+            var metricMonitoring = new MetricMonitoring(PerformanceMetric.TotalHttpRequestsServed, PerformanceMetric.RequestsPerSecond);
+            ILogWriter logwriter = new LogWriter(options.Logfile);
+            var networkMonitor = new NetworkTrafficMonitor();
+            var mg = new MachineGun(options, metricMonitoring,networkMonitor, logwriter);
 
-            var mg = new MachineGun(options, new NetworkTrafficMonitor());
             Task.WaitAll(new[] {mg.Run()});
 
         }

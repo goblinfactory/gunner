@@ -7,6 +7,14 @@ namespace Gunner.Engine
 {
     public class Options
     {
+        public Options()
+        {
+            Format = Options.DefaultFormat;
+            Delimiter = ",";
+            Timeout = 300;
+            StaggerStart = 100;
+        }
+
         [Option('a', "csv",
             HelpText = "relative path to a csv file containing urls to request.")]
         public string Csv { get; set; }
@@ -31,7 +39,7 @@ namespace Gunner.Engine
 
         [Option('e', "end", DefaultValue = 500,
             HelpText = "Total number of simultaneous user connections (parallel connections) that the tests will attempt to ramp up to.")]
-        public int Users { get; set; }
+        public int End { get; set; }
 
 
         [Option('f', "format", Required = false, DefaultValue = Options.DefaultFormat,
@@ -39,7 +47,7 @@ namespace Gunner.Engine
         public string Format { get; set; }
 
         [Option('g', "gap", DefaultValue = 100,
-    HelpText = "Pause (gap) between each request.")]
+    HelpText = "Pause (gap) between each request. (random from 0 to this value) to avoid clumping.")]
         public int Gap { get; set; }
 
 
@@ -69,9 +77,15 @@ namespace Gunner.Engine
             HelpText = "Number of concurrent users to start with. Gunner will start with this value (s), run tests up until (u), incrementing in steps of (i) ")]
         public int Start { get; set; }
 
+        [Option("stagger", DefaultValue = 100,
+            HelpText = "Starting of the batches will be staggered randomly between 0 and this value (ms) to avoid clumping.")]
+        public int StaggerStart { get; set; }
+
+
         [Option('t', "timeout", DefaultValue = 600,
             HelpText = "Test timeout. Maximum time (in seconds) allowed for each (up to the final batch) to all return. (not yet done any decent reporting for when this happens. TODO)")]
         public int Timeout { get; set; }
+
 
         //public string[] Urls
         //{

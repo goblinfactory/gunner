@@ -1,0 +1,1 @@
+Gunner.Console\bin\debug\gunner.exe --start 10 --end 20 -i 0 -p 0 -r 20 -w http://localhost:8082/ -n latitude -a files.txt -g 100 -c --stagger 200

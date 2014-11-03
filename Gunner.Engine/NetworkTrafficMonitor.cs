@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Gunner.Engine
 {
-
-    public interface INetworkTrafficMonitor 
+    public interface ITrafficMonitor 
     {
         NetworkTraffic ReadTrafficSinceMonitoringStarted();
         void StartMonitoring();
     }
 
-    public class NetworkTrafficMonitor : INetworkTrafficMonitor
+    public class NetworkTrafficMonitor : ITrafficMonitor
     {
         private readonly List<IPv4InterfaceStatistics> _activeNicStats;
 

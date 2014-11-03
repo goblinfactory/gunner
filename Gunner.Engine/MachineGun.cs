@@ -133,14 +133,9 @@ namespace Gunner.Engine
                 tasks.Add(task);
             }
             // Sum the batch results!
-
-            //NB! do while no more users waiting to finish to WhenAny?? tally the batch totals!  (BatchTotal to derive from UserTotal )
-
-            //Task.WaitAll(tasks.ToArray(), options.Timeout * 1000);
             while (tasks.Any())
             {
                 //no locking requires since userResult will never "finish" twice!  w00t! love this pattern...
-                //Q: does this block my cancellation in this loop?
                 Task<UserRunResult> userResultTask = await Task.WhenAny(tasks);
                 var userResult = await userResultTask;
                 tasks.Remove(userResultTask);
@@ -152,11 +147,9 @@ namespace Gunner.Engine
             int total = batch.Total;
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
             float averesponse = (1F/rps) *1000; 
-            //todo: move to logging class
             string logline = string.Format(options.Format, DateTime.Now, grandTotal + total, rps, users, batch.Success, batch.Fail, averesponse, batch.Traffic.ReceivedBytes.ToMegabytes(), batch.Traffic.SentBytes.ToMegabytes(), batch.MemoryUsedMb);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
-            //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
             if (!string.IsNullOrWhiteSpace(options.Logfile)) File.AppendAllLines(options.Logfile, new[] { logline + " " + batch.ToString() });
             return total;
         }
@@ -164,12 +157,11 @@ namespace Gunner.Engine
         public static List<string> _errors = new List<string>(10000);
         public static DateTime LastFlush = DateTime.Now;
 
-        // NB! replace with nlog! this will potentially lose the last 5 seconds of errors, just putting this in here for now as a hacky source of debug info
-
-        
+        // NB! replace with nlog? (re-invent wheel). this will potentially lose the last 5 seconds of errors, just putting this in here for now as a hacky source of debug info
+        // useful to have here as it doesnt require user to configure any log4net or nlog configuration files.
         public static void LogError(string url, Exception ex, string path)
         {
-            // NB! this will cause problems at high concurrency!
+            // NB! this will (may?) cause problems at high concurrency!
             string error = string.Format("ERROR {0} : {1} {2}", url, ex.Message, ex.InnerException != null ? ex.InnerException.Message : "");
             _errors.Add(error);
             if (DateTime.Now.Subtract(LastFlush).TotalSeconds>5)

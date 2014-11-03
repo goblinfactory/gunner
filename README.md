@@ -2,8 +2,7 @@ Gunner
 ====
 
 Gunner is a proof of concept command line Load test tool for windows to rapid fire requests against a test or pre-production server. 
-A design goal from the outset was to have as small a memory and cpu usage footprint as possible when high concurrency load testing, requiring fewer test servers when trying to fire enough requests at a server or cluster, to get a rough idea on sytem and infrastructure performance and capacity. 
-Existing testing tools require very many test servers to be able to simulate a large load, increasing the number of concurrent users that can be simulated, on a per (test server) basis will reduce the number of test servers (clients, or injectors), needed to get meaningful results.
+A design goal from the outset was to have as small a memory and cpu usage footprint as possible and at the same time be capable of delivering high concurrency load testing, basically it's a *super simplified poor man's load runner, and-or a one liner command-line jmeter replacement*.
 
 Compatibility:
 ---
@@ -18,12 +17,12 @@ Current Release:
 At a glance:
 ---
 - xcopy deployable.
-- For now, only supports IPv4 and one NIC _(techie stuff -> If more than 1 nic or uses the first one of )_
-- Currently similar to curl. (this poc.) 
-- One line server load testing
+- For now, only supports IPv4 and one NIC _(If more than 1 nic, uses the first ethernet nic. If using wifi, measuring 'actual' network traffic currently not enabled.)_
+- Lots of similarities to curl. 
+- One line server load testing.
 - Low memory footprint (500 users at only 40Mb memory footprint.)
 - [High throughput ( tested > 7000 rps)](/PERFORMANCE.md)
-- High concurrency ( needs data. This was initially one of the drivers for writing gunner, to test concurrency, however RPS has since taken centre stage wrt priority. )
+- High concurrency ( needs data. This was initially one of the drivers for writing gunner, to test concurrency, however throughput, requests per second, has since taken centre stage wrt priority. )
 - Easy to use, get up and running and testing, in seconds.
 - Use as a simple diagnostic tool to quickly identify network bottlenecks and test NFR's. (needs example)
 - Envisage usage could be to keep a server idling warm or hot while journey testing is done using Selenium, Watin, Jmeter or other test tool, or manual testing.
@@ -45,7 +44,7 @@ The example above will run the following load against the server at ``http://loc
 - Each simulated user will make 100 requests 
 - Requests are split evenly between supplied urls, in the example above: ``small1.json`` and ``small2.json`` respectively.
 - Tests will wait between each batch of users, for all users to finish and then pause.
-- Default pause is ``8`` seconds between tests to allow the system to Idle. (can be overridden with -p setting.)
+- Default pause is ``5`` seconds between tests to allow the system to Idle. (can be overridden with -p setting.)
 
 Here's the result of me testing 2000 to 5000 simultaneous users, running on a windows virtual machine, on a macpro.
 
@@ -104,7 +103,8 @@ Requirements
 Immediate Current work
 ---
  - Get tests results as accurate as is needed to be a useful tool. Possibly write an acceptance test, something along the lines of:
- - show total network traffic.
+ - show total network traffic. 
+ - autodetect network card.
 ```
 	Given gunner 
 	And a webserver
@@ -126,6 +126,7 @@ Roadmap (high priority ideas)
 Idea backlog (unsorted)
 ---
   - __gzip__, gzip support? Add and test. ``client.Headers["Accept-Encoding"] = "gzip";``
+  - __auto detect nic__, so that we can automatically tell when testing using wifi, localhost or multiple adapters. (autodetecting seems plausable, sort by NIC with highest traffic.)
   - __random seed__, so that random tests can be re-run with the same requests and timings. In case of unexpected clumping.
   - __extend csv__, add extra fields to csv file, (url,verb,status,find,body)
   - __authentication__ oauth, forms, and custom headers, so that can be used for journey testing.

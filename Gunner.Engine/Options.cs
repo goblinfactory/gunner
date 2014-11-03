@@ -16,7 +16,7 @@ namespace Gunner.Engine
         public bool LogErrors { get; set; }
 
 
-        [Option('c', "cachebuster", DefaultValue = true,
+        [Option('c', "cachebuster", DefaultValue = false,
             HelpText = "Whether to append a cachebuster string to the end of your url or not.")]
         public bool Cachebuster { get; set; }
 

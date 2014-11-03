@@ -15,10 +15,12 @@ namespace Gunner.Engine
     public class MachineGun
     {
         private readonly Options _options;
+        private readonly INetworkTrafficMonitor _trafficMonitor;
 
-        public MachineGun(Options options)
+        public MachineGun(Options options, INetworkTrafficMonitor trafficMonitor)
         {
             _options = options;
+            _trafficMonitor = trafficMonitor;
             _urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
         }
 
@@ -54,7 +56,7 @@ namespace Gunner.Engine
             int grandTotal = 0;
             for (int batch =  _options.Start; batch <= _options.Users; batch += _options.Increment)
             {
-                int total = await TestCocurrentRequests(nicStats, grandTotal, startMemory,_options, batch, _options.Repeat, _options.Gap);
+                int total = await TestCocurrentRequests(_trafficMonitor, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
                 grandTotal += total;
                 Thread.Sleep(_options.Pause);
             }
@@ -101,11 +103,10 @@ namespace Gunner.Engine
         }
 
         // pause betweenRequests can be used to simulate network latency
-        static async Task<int> TestCocurrentRequests(IPv4InterfaceStatistics nicstats, int grandTotal, decimal MbStart, Options options,int users, int repeat, int pauseBetweenRequests)
+        static async Task<int> TestCocurrentRequests(INetworkTrafficMonitor network, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult();
-            long nicBytesInBefore = nicstats.BytesReceived;
-            long nicBytesOutBefore = nicstats.BytesSent; 
+            network.StartMonitoring();
 
             var tasks = new List<Task<UserRunResult>>();
             var sw = new Stopwatch();
@@ -146,14 +147,13 @@ namespace Gunner.Engine
                 batch.UpdateTotals(userResult);
             }
             sw.Stop();
-            batch.NetworkBytesSent = nicstats.BytesSent - nicBytesOutBefore;
-            batch.NetworkBytesRecieved = nicstats.BytesReceived - nicBytesInBefore;
-            batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb()-MbStart;
+            batch.Traffic = network.ReadTrafficSinceMonitoringStarted();
+            batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb() - MbStart;
             int total = batch.Total;
             float rps = ((float)total / sw.ElapsedMilliseconds) * 1000;
             float averesponse = (1F/rps) *1000; 
             //todo: move to logging class
-            string logline = string.Format(options.Format, DateTime.Now, grandTotal + total, rps, users, batch.Success, batch.Fail, averesponse, batch.NetworkMBRecieved, batch.NetworkMBSent, batch.MemoryUsedMb);
+            string logline = string.Format(options.Format, DateTime.Now, grandTotal + total, rps, users, batch.Success, batch.Fail, averesponse, batch.Traffic.ReceivedBytes.ToMegabytes(), batch.Traffic.SentBytes.ToMegabytes(), batch.MemoryUsedMb);
             Console.Write(logline);
             Console.WriteLine(" {0}",batch);
             //NB! does not keep file open, so that it doesn't lock, and so that it can be monitored in realtime for graphing.
@@ -188,7 +188,8 @@ namespace Gunner.Engine
         private static string GetUrl(int i, bool cachebust)
         {
             int len = _urls.Length;
-            return _urls[i%len];
+            var url = _urls[i%len];
+            return cachebust ? UrlReader.Bust(url) : url;
         }
     }
 

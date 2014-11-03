@@ -45,7 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatchRunResult.cs" />
+    <Compile Include="ConvertExtensions.cs" />
     <Compile Include="MemoryHelper.cs" />
+    <Compile Include="NetworkTraffic.cs" />
+    <Compile Include="NetworkTrafficMonitor.cs" />
     <Compile Include="UserRunResult.cs" />
     <Compile Include="MachineGun.cs" />
     <Compile Include="Options.cs" />

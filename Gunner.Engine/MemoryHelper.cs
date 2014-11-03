@@ -11,7 +11,7 @@ namespace Gunner.Engine
     {
         public static decimal GetPeakWorkingSetKb()
         {
-            return Process.GetCurrentProcess().PeakWorkingSet64/(1048576M);
+            return Process.GetCurrentProcess().PeakWorkingSet64.ToMegabytes();
         }
     }
 }

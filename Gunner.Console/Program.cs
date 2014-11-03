@@ -41,8 +41,8 @@ namespace Gunner.Console
                 File.Create(path).Close();
                 options.Logfile = path;
             }
-            var mg = new MachineGun(options);
-            //console.WriteLine("press 'q' to stop tests.");
+
+            var mg = new MachineGun(options, new NetworkTrafficMonitor());
             Task.WaitAll(new[] {mg.Run()});
 
         }

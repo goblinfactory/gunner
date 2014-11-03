@@ -13,7 +13,6 @@ namespace Gunner.Engine
         private string _uriRoot;
         private string _urls;
         private string _csv;
-        private bool _cachebust;
 
         public UrlReader(Options option)
         {
@@ -22,7 +21,6 @@ namespace Gunner.Engine
             _uriRoot = option.Root;
             _csv = option.Csv;
             _uriRoot = option.Root;
-            _cachebust = option.Cachebuster;
         }
 
         public string[] ReadUrls(string currentDirectory)
@@ -32,9 +30,9 @@ namespace Gunner.Engine
             throw new ArgumentException("could not read urls, neither csv or urls has been set.");
         }
 
-        private string Bust(string src)
+        public static string Bust(string src)
         {
-            string busted = _cachebust ? "?buster=" + Guid.NewGuid().ToString() : "";
+            string busted = "?buster=" + Guid.NewGuid().ToString();
             return string.Format("{0}{1}", src, busted);
         }
         
@@ -60,7 +58,7 @@ namespace Gunner.Engine
                     .ReadAllLines(path)
                     .Select(u=> u.Trim())
                     .Where(u=> !string.IsNullOrWhiteSpace(u))
-                    .Select(u=> string.Format("{0}{1}",_uriRoot,Bust(u))).ToArray();
+                    .Select(u=> string.Format("{0}{1}",_uriRoot,u)).ToArray();
                 return urlList;
             }
             catch (Exception ex)

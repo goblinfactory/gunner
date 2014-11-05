@@ -7,10 +7,12 @@ namespace Gunner.Engine
     {
         public PerformanceMetric Metric { get; set; }
         public float Value { get; set; }
+        
     }
 
     public interface IMetricMonitoring
     {
          List<MetricValue> ReadMetrics();
+         bool SystemBeingMonitoredIsCold { get; }
     }
 }

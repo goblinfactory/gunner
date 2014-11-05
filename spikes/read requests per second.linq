@@ -8,8 +8,9 @@ using(var pc = new PerformanceCounter())
 	pc.CategoryName = @"W3SVC_W3WP";
 	pc.InstanceName = @"_Total";
 	// how to read all the counters in this space?
-	//pc.CounterName = @"Total Get Requests";
-	pc.CounterName = @"Requests / Sec";
+	//pc.CounterName = @"Requests / Sec";
+	
+	pc.CounterName = @"Total HTTP Requests Served";
 	
 
 	

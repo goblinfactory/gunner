@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Gunner.Engine
 {
+    public interface IUrlReader
+    {
+        string Delimiter { get; }
+        string UrlList { get; }
+        string Root { get;  }
+        string Csv { get; }
+    }
+
     public class UrlReader
     {
         private string _delimiter;
@@ -14,13 +22,12 @@ namespace Gunner.Engine
         private string _urls;
         private string _csv;
 
-        public UrlReader(Options option)
+        public UrlReader(IUrlReader option)
         {
             _delimiter = option.Delimiter;
             _urls = option.UrlList;
             _uriRoot = option.Root;
             _csv = option.Csv;
-            _uriRoot = option.Root;
         }
 
         public string[] ReadUrls(string currentDirectory)

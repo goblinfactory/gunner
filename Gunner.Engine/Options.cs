@@ -5,7 +5,7 @@ using CommandLine.Text;
 
 namespace Gunner.Engine
 {
-    public class Options
+    public class Options : IUrlReader
     {
         public Options()
         {
@@ -104,6 +104,14 @@ namespace Gunner.Engine
             HelpText = "root website prefix for all the urls,so that the urls can be smaller and easier to write in a list")]
         public string Root { get; set; }
 
+        [Option( "skipbatch", Required = false, DefaultValue = 0,
+            HelpText = "Number of batches to skip from logging, reporting and testing. So that the system can be warmed up before monitoring acts on the results. (Normally you need to skip enough batches that your monitoring averages don't overlap a period while your testing had not yet started.)")]
+        public int SkipBatches { get; set; }
+
+        [Option("warningshot", Required = false, DefaultValue = false,
+            HelpText = "Fire off 1 random request (warning shot) to wake up the server before starting any testing. Useful if you want to wake up a server with a single request.")]
+        public bool WarningShot { get; set; }
+        
         //[Option('a', "action", DefaultValue = "GET",
         //   HelpText = "Prints all messages to standard output.")]
         //public bool Action { get; set; }

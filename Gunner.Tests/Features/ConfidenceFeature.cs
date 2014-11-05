@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -17,52 +18,99 @@ namespace Gunner.Tests.Features
     [TestFixture]
     public class ConfidenceFeature
     {
+        // =========================================================================================================
+        //
+        //                                                  REQUIREMENTS
+        //
+        // =========================================================================================================
+
         [Test]
         [Category("very-slow"),Ignore("Run manually.")]
-        public void ShouldBeAbleToTrustResults()
+        public void ShouldBeAbleToTrustResultsForTestsWithLargeSampleSizes()
         {
+            // note: where large = > 5000 samples, and time > 20 seconds
             Test.TraceFeature();
-            Given_Gunner();
-            And_a_webserver();
+            Given_a_webserver();
+            Given_Gunner(repeat:75);
             When_gunner_is_run();
             And_reports_requests_per_second_of_x();
-            Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance();
+            Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance(0.02F);
         }
 
+        [Test]
+        [Category("very-slow"), Ignore("Run manually.")]
+        public void ShouldBeAbleToTrustResultsForTestsWithMediumSampleSizes()
+        {
+            // note: where medium = > 750 samples, and time > 5 seconds
+            Test.TraceFeature();
+            Given_a_webserver();
+            Given_Gunner(20);
+            When_gunner_is_run();
+            And_reports_requests_per_second_of_x();
+            Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance(0.04F);
+        }
+
+        [Test]
+        [Category("slow"), Ignore("Run manually.")]
+        public void ShouldBeAbleToTrustResultsForTestsWithSmallSampleSizes()
+        {
+            // note: where small = > 200 samples, and time > 5 seconds
+            Test.TraceFeature();
+            Given_a_webserver();
+            Given_Gunner(5);
+            When_gunner_is_run();
+            And_reports_requests_per_second_of_x();
+            Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance(0.1F);
+        }
+
+
+        // =========================================================================================================
+        //
+        //                                                STEP DEFINITIONS
+        //
+        // =========================================================================================================
+
         #region step definitions
+
 
         private MachineGun _gunner;
         private MockLogwriter _logwriter;
         private Task _task;
-        private List<BatchRunResult> _results; 
+        private List<BatchRunResult> _results;
+        private DateTime _lastFlush = DateTime.Now;
+        private readonly List<string> _errors = new List<string>();
 
-        private void Given_Gunner()
+        private void Given_Gunner(int repeat)
         {
             Test.TraceStep();
             var options = new Options()
                 {
-                    Start = 10,
-                    End = 15,
+                    Start = 50,
+                    End = 300,
                     Pause = 0,
-                    Gap = 100,
-                    Repeat = 75,
+                    Gap = 20,
+                    Repeat = repeat,
                     Logfile = "ConfidenceFeature.log",
                     Find = Settings.TestFileContains,
                     Root =  Settings.Root,
-                    Increment = 1,
+                    Increment = 50,
                     UrlList = Settings.TestFile,
-                    Timeout = 200
+                    Timeout = 200,
+                    Verbose = false
                 };
+            // should I use a builder?
             _logwriter = new MockLogwriter(false);
             var metricMonitoring = new MetricMonitoring(PerformanceMetric.RequestsPerSecond);
-            var networkMonitor = new NetworkTrafficMonitor();
-            _gunner = new MachineGun(options,metricMonitoring,networkMonitor,_logwriter);
+            var trafficMonitor = new NetworkTrafficMonitor();
+            var urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
+            //NB! Move errors and lastflush into Downloader class! or into errorlogger that's passed to downloader
+            var downloader = new Downloader(_errors, ref _lastFlush);
+            _gunner = new MachineGun(downloader, options,_logwriter, urls, trafficMonitor, metricMonitoring);
         }
 
-        private void And_a_webserver()
+        private void Given_a_webserver()
         {
             Test.TraceStep();
-            // test to prove webserver is running and wake it up.
             var client = new WebClient();
             var result = client.DownloadString(Settings.Root + Settings.TestFile);
             result.Should().Contain(Settings.TestFileContains);
@@ -84,27 +132,26 @@ namespace Gunner.Tests.Features
             _results.ForEach(r=> r.RequestsPerSecond.Should().BeGreaterThan(1));
         }
 
-        private void Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance()
+        private void Then_the_webserver_should_report_similar_requests_per_second_within_an_acceptable_tolerance(float tolerance)
         {
             Test.TraceStep();
-            var tolerance = 0.3F;
             var lower = (1-tolerance);
             var higher = (1 + tolerance);
             Console.WriteLine();
-            Console.WriteLine("Tolerance of 30% For a short test of around 3 to 4 seconds, the tolerance is wide because simple systems measurements are over a 1 second interval and cannot easily be synchronised with automated tests and calculated values. Longer running tests will amortise the discepency over more tests and allow for a finer tolerance.");
-            Console.WriteLine();
+            Console.WriteLine("Skipping first result and checking deviation no more than {0:0.00}%.",tolerance * 100);
             Console.WriteLine("calculated rps, Measured rps, Actual deviation %");
-            _results.ForEach(r =>
+            _results.Skip(1).ToList().ForEach(r =>
                 {
                     var rpsMetric = r.Metrics.First(m => m.Metric == PerformanceMetric.RequestsPerSecond).Value;
                     var deviation = (1F - (rpsMetric/r.RequestsPerSecond))*100;
                     Console.WriteLine("{0,7:0.00},{1,7:0.00}, {2,7:0.00}%",r.RequestsPerSecond,rpsMetric,deviation);
                     var min = lower * rpsMetric;
                     var max = higher * rpsMetric; 
-                    //r.RequestsPerSecond.Should().BeInRange(min, max);
+                    r.RequestsPerSecond.Should().BeInRange(min, max);
                 });
         }
 
         #endregion
     }
+
 }

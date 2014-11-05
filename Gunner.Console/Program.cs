@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Gunner.Engine;
 using console = System.Console;
@@ -41,15 +43,12 @@ namespace Gunner.Console
                 File.Create(path).Close();
                 options.Logfile = path;
             }
-            // for now I'm only monitoring local IIS 
-            // later will update to be able to monitor remote window servers, and as a bonus remote apache, jetty dropwizard etc.
-            var metricMonitoring = new MetricMonitoring(PerformanceMetric.TotalHttpRequestsServed, PerformanceMetric.RequestsPerSecond);
-            ILogWriter logwriter = new LogWriter(options.Logfile);
-            var networkMonitor = new NetworkTrafficMonitor();
-            var mg = new MachineGun(options, metricMonitoring,networkMonitor, logwriter);
 
-            Task.WaitAll(new[] {mg.Run()});
-
+            var factory = new Factory();
+            var machineGun = factory.CreateMachineGun(options);
+            if (options.WarningShot)
+                machineGun.FireOneShotAcrossTheBowAndWakeThatSuckerUp();
+            Task.WaitAll(new[] { machineGun.Run() }); 
         }
 
     }

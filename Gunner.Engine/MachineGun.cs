@@ -15,6 +15,7 @@ namespace Gunner.Engine
     public class MachineGun
     {
         public bool IsRunning { get; set; }
+        private readonly IDownloader _downloader;
         private readonly Options _options;
         private readonly IMetricMonitoring _metricMonitoring;
         private readonly ITrafficMonitor _trafficMonitor;
@@ -26,29 +27,36 @@ namespace Gunner.Engine
             return _batchRunResults;
         }
 
-        public MachineGun(Options options, IMetricMonitoring metricMonitoring, ITrafficMonitor trafficMonitor, ILogWriter logWriter)
+
+        public MachineGun(IDownloader downloader, Options options, ILogWriter logWriter, string[] urls, ITrafficMonitor trafficMonitor, IMetricMonitoring metricMonitoring = null)
         {
+            _downloader = downloader;
             _options = options;
-            _metricMonitoring = metricMonitoring;
+            _metricMonitoring = metricMonitoring ?? new NullMetricMonitor();
             _trafficMonitor = trafficMonitor;
             _logWriter = logWriter;
-            _urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
+            _urls = urls; 
             IsRunning = false;
             _batchRunResults = new List<BatchRunResult>();
+        }
+
+        public string[] Urls { get { return _urls; } }
+
+        public void FireOneShotAcrossTheBowAndWakeThatSuckerUp()
+        {
+            var url = _urls[0] + "?bust=" + Guid.NewGuid();
+            using (var client = new WebClient())
+            {
+                client.DownloadString(url);
+            }
         }
 
         private const int VerboseMessagesToShow = 10;
         public const string Title = "Gunner v 0.1";
         public async Task Run()
         {
-            IPv4InterfaceStatistics nicStats =null;
-
-            var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(c => c.NetworkInterfaceType.ToString().Contains("Ethernet"));
-            if (nic != null)
-            {
-                nicStats = nic.GetIPv4Statistics();
-            }
-
+            if (_metricMonitoring.SystemBeingMonitoredIsCold) 
+                FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             Console.WriteLine(Title);
             Console.WriteLine(Options.DefaultHeader);
             if (_options.Verbose)
@@ -70,9 +78,12 @@ namespace Gunner.Engine
             IsRunning = true;
             var sw = new Stopwatch();
             sw.Start();
+            int batchNumber = 1;
             for (int batch =  _options.Start; batch <= _options.End; batch += _options.Increment)
             {
-                BatchRunResult batchResult = await TestCocurrentRequests(_metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
+                batchNumber++;
+                bool skipBatch = (batchNumber <= _options.SkipBatches);
+                BatchRunResult batchResult = await TestCocurrentRequests(batchNumber,_downloader, skipBatch, _metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
                 _batchRunResults.Add(batchResult);
                 grandTotal += batchResult.Total;
                 Thread.Sleep(_options.Pause);
@@ -83,46 +94,47 @@ namespace Gunner.Engine
             Console.WriteLine("-------- finished ---------");
         }
 
-        public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
-        {
-            var dr = new DownloadResult();
-            try
-            {
-                var result = client.DownloadString(url);
-                if (result.Contains(find))
-                {
-                    dr.Success = true;
-                    return dr;
-                }
-                dr.Success = false;
-                return dr;
-            }
-            catch (WebException we)
-            {
-                if (logErrors) LogError(url, we, logPath);
-                dr.Success = false;
+        //public static DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+        //{
+        //    var dr = new DownloadResult();
+        //    try
+        //    {
+        //        var result = client.DownloadString(url);
+        //        if (result.Contains(find))
+        //        {
+        //            dr.Success = true;
+        //            return dr;
+        //        }
+        //        dr.Success = false;
+        //        return dr;
+        //    }
+        //    catch (WebException we)
+        //    {
+        //        if (logErrors) LogError(url, we, logPath);
+        //        dr.Success = false;
 
-                if (we.Status == WebExceptionStatus.ProtocolError)
-                {
-                    var response = we.Response as HttpWebResponse;
-                    if (response != null)
-                    {
-                        dr.ErrorCode = (int) response.StatusCode;
-                    }
-                }
-                if (logErrors) LogError(url, we, logPath);
-                return dr;
-            }
-            catch (Exception ex)
-            {
-                if (logErrors) LogError(url, ex, logPath);
-                dr.Success = false;
-                return dr;
-            }
-        }
+        //        if (we.Status == WebExceptionStatus.ProtocolError)
+        //        {
+        //            var response = we.Response as HttpWebResponse;
+        //            if (response != null)
+        //            {
+        //                dr.ErrorCode = (int) response.StatusCode;
+        //            }
+        //        }
+        //        if (logErrors) LogError(url, we, logPath);
+        //        return dr;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (logErrors) LogError(url, ex, logPath);
+        //        dr.Success = false;
+        //        return dr;
+        //    }
+        //}
 
         // pause betweenRequests can be used to simulate network latency
-        static async Task<BatchRunResult> TestCocurrentRequests(IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
+        
+        static async Task<BatchRunResult> TestCocurrentRequests(int batchNumber, IDownloader downloader, bool skipBatch, IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult();
             network.StartMonitoring();
@@ -131,6 +143,7 @@ namespace Gunner.Engine
             var sw = new Stopwatch();
             
             sw.Start();
+            batch.TimeStart = DateTime.Now;
             for (int i = 1; i < users+1; i++)
             {
                 Task<UserRunResult> task = Task.Run( async () =>
@@ -144,7 +157,7 @@ namespace Gunner.Engine
                             for (int r = 0; r < repeat; r++)
                             {
                                 var url = GetUrl(r, options.Cachebuster);
-                                var dr = Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
+                                var dr = downloader.Download(url, client, options.Find, options.Verbose, VerboseMessagesToShow, options.Cachebuster, options.Logfile, options.LogErrors);
                                 batchResult.UpdateTotals(dr);
                                 if (pauseBetweenRequests > 0) await Task.Delay(new Random().Next(options.StaggerStart));
                             }                            
@@ -163,6 +176,8 @@ namespace Gunner.Engine
                 batch.UpdateTotals(userResult);
             }
             sw.Stop();
+            batch.TimeStop = DateTime.Now;
+            batch.DurationMs = sw.ElapsedMilliseconds;
             batch.Traffic = network.ReadTrafficSinceMonitoringStarted();
             batch.MemoryUsedMb = MemoryHelper.GetPeakWorkingSetKb() - MbStart;
             int total = batch.Total;
@@ -200,13 +215,11 @@ namespace Gunner.Engine
 
         private static string[] _urls;
 
-        // to do, convert to a class, and store an instance of the class into a static
         private static string GetUrl(int i, bool cachebust)
         {
             int len = _urls.Length;
-            var url = _urls[i%len];
+            var url = _urls[new Random().Next(len)];
             return cachebust ? UrlReader.Bust(url) : url;
         }
     }
-
 }

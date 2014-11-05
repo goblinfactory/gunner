@@ -53,9 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\Build.cs" />
-    <Compile Include="Build\Settings.cs" />
     <Compile Include="Features\ConfidenceFeature.cs" />
+    <Compile Include="Features\SkipBatchFeature.cs" />
+    <Compile Include="Internal\Settings.cs" />
     <Compile Include="Internal\TestHelper.cs" />
+    <Compile Include="Mocks\MockDownloader.cs" />
     <Compile Include="Mocks\MockLogwriter.cs" />
     <Compile Include="PerformanceMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

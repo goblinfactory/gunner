@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -9,9 +10,9 @@ namespace Gunner.Tests.Internal
 {
     public static class Test
     {
-
+        //NB! this doesnt appear to work when doing a release build, seems to inline these methods into the caller causing title to be for the main test class, and not for the method! huh!
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void TraceFeature()
+        public static void TraceFeature(params string[] parms)
         {
             var name = new StackTrace().GetFrame(1).GetMethod().Name.Replace("_", " ");
             Console.WriteLine(name);
@@ -19,10 +20,10 @@ namespace Gunner.Tests.Internal
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void TraceStep()
+        public static void TraceStep(object value =null)
         {
             var name = new StackTrace().GetFrame(1).GetMethod().Name.Replace("_", " ");
-            Console.WriteLine(name);
+            Console.WriteLine(name + " " + value ?? "");
         }
 
     }

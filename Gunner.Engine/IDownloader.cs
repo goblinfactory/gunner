@@ -9,6 +9,6 @@ namespace Gunner.Engine
 {
     public interface IDownloader
     {
-        DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors);
+        DownloadResult Download(string url, WebClient client, string find, bool cachebust);
     }
 }

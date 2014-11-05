@@ -8,6 +8,9 @@ namespace Gunner.Engine
 {
     public class BatchRunResult : UserRunResult {
 
+        public int Users { get; set; }
+        public int GrandTotalRequests { get; set; }
+        public int BatchNumber { get; set; }
         public DateTime TimeStart { get; set; }
         public DateTime TimeStop { get; set; }
         public long DurationMs { get; set; }
@@ -18,8 +21,9 @@ namespace Gunner.Engine
         public decimal MemoryUsedMb { get; set; }
         public NetworkTraffic Traffic { get; set; }
 
-        public BatchRunResult() 
+        public BatchRunResult(int batchNumber)
         {
+            BatchNumber = batchNumber;
             Metrics = new List<MetricValue>();
         }
 

@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="BatchRunResult.cs" />
     <Compile Include="ConvertExtensions.cs" />
+    <Compile Include="DictionaryHelper.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="Heater.cs" />
     <Compile Include="IDownloader.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="NetworkTrafficMonitor.cs" />
     <Compile Include="MetricMonitoring.cs" />
     <Compile Include="NullMetricMonitor.cs" />
+    <Compile Include="Reporter.cs" />
     <Compile Include="UserRunResult.cs" />
     <Compile Include="MachineGun.cs" />
     <Compile Include="Options.cs" />

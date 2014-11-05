@@ -5,11 +5,12 @@ using CommandLine.Text;
 
 namespace Gunner.Engine
 {
-    public class Options : IUrlReader
+    public class Options : IUrlReader, IReporterFormat
     {
         public Options()
         {
-            Format = Options.DefaultFormat;
+            Header = Options._defaultHeader;
+            Format = Options._defaultFormat;
             Delimiter = ",";
             Timeout = 300;
             StaggerStart = 100;
@@ -32,23 +33,26 @@ namespace Gunner.Engine
            HelpText = "Character delimiter for lists. If you want to use a | then you will need to enclose any values containing a pipe with quotes (\")")]
         public string Delimiter { get; set; }
 
-        //TODO: create default formats for each of the columns, then let user select columns?
-        public const string DefaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms,{7,7:0.00}Mb, {8,7:0.00}Mb, ({9,7:0.0}Mb ram)";
-                                          //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms,   0.00Mb,    0.00Mb, (   20.7Mb ram)
-        public const string DefaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--MB (in),---MB(out),---------MB(RAM)";
-
+        
         [Option('e', "end", DefaultValue = 500,
             HelpText = "Total number of simultaneous user connections (parallel connections) that the tests will attempt to ramp up to.")]
         public int End { get; set; }
 
+        public const string _defaultFormat = "{0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7}, {6,7:0.0000}ms,{7,7:0.00}Mb, {8,7:0.00}Mb, ({9,7:0.0}Mb ram)";
 
-        [Option('f', "format", Required = false, DefaultValue = Options.DefaultFormat,
+        [Option('f', "format", Required = false, DefaultValue = _defaultFormat,
             HelpText = "Test results format string. Please keep the sequence the same, otherwise headers wont match and,or, automated log reporting can fail.")]
         public string Format { get; set; }
 
         [Option('g', "gap", DefaultValue = 100,
     HelpText = "Pause (gap) between each request. (random from 0 to this value) to avoid clumping.")]
         public int Gap { get; set; }
+
+        public const string _defaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--MB (in),---MB(out),---------MB(RAM)";
+                                            //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms,   0.00Mb,    0.00Mb, (   20.7Mb ram)
+        [Option('h', "header", DefaultValue = Options._defaultHeader,
+        HelpText = "Default header for formatting the console output.")]
+        public string Header { get; set; }
 
 
         [Option('i', "increment", DefaultValue = 50,

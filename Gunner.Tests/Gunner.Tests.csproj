@@ -58,7 +58,9 @@
     <Compile Include="Internal\Settings.cs" />
     <Compile Include="Internal\TestHelper.cs" />
     <Compile Include="Mocks\MockDownloader.cs" />
+    <Compile Include="Mocks\MockErrorLogger.cs" />
     <Compile Include="Mocks\MockLogwriter.cs" />
+    <Compile Include="Mocks\MockTrafficMonitor.cs" />
     <Compile Include="PerformanceMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Build\CreatePackage.cs" />

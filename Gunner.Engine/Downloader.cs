@@ -8,31 +8,61 @@ using System.Threading.Tasks;
 
 namespace Gunner.Engine
 {
-    public class Downloader : IDownloader
+    public interface IErrorLoggerSettings
+    {
+        string LogFile { get; set; }
+   
+    }
+
+    public interface IErrorLogger
+    {
+        void LogError(string url, Exception ex);
+    }
+
+    public class ErrorLogger : IErrorLogger
     {
         private readonly List<string> _errors;
         private DateTime _lastFlush;
+        private readonly string _errorLogPath;
+        private readonly bool _logErrors;
 
-        public Downloader(List<string> errors, ref DateTime lastFlush)
+        public ErrorLogger(string errorLogPath, bool logErrors)
         {
-            _errors = errors;
-            _lastFlush = lastFlush;
+            _errors = new List<string>();
+            _lastFlush = DateTime.Now;
+            _errorLogPath = errorLogPath;
+            _logErrors = logErrors;
         }
 
-        private void LogError(string url, Exception ex, string path)
+        public void LogError(string url, Exception ex)
         {
+            if (!_logErrors) return;
             // NB! this will (may?) cause problems at high concurrency!
             string error = string.Format("ERROR {0} : {1} {2}", url, ex.Message, ex.InnerException != null ? ex.InnerException.Message : "");
             _errors.Add(error);
+            
+            // NB! need a datetime provider!!?? ADH: not for now, this class is easy to mock and it encapsulates most of the usages
+            // NB! of the filesystem and date time.
             if (DateTime.Now.Subtract(_lastFlush).TotalSeconds > 5)
             {
                 _lastFlush = DateTime.Now;
-                File.AppendAllLines(path, _errors.ToArray());
+                File.AppendAllLines(_errorLogPath, _errors.ToArray());
                 _errors.Clear();
             }
         }
 
-        public DownloadResult Download(string url, WebClient client, string find, bool verbose, int verboseMessagesToShow, bool cachebust, string logPath, bool logErrors)
+    }
+
+    public class Downloader : IDownloader
+    {
+        private readonly IErrorLogger _errorLogger;
+
+        public Downloader(IErrorLogger errorLogger)
+        {
+            _errorLogger = errorLogger;
+        }
+
+        public DownloadResult Download(string url, WebClient client, string find, bool cachebust)
         {
             var dr = new DownloadResult();
             try
@@ -48,9 +78,7 @@ namespace Gunner.Engine
             }
             catch (WebException we)
             {
-                if (logErrors) LogError(url, we, logPath);
                 dr.Success = false;
-
                 if (we.Status == WebExceptionStatus.ProtocolError)
                 {
                     var response = we.Response as HttpWebResponse;
@@ -59,12 +87,12 @@ namespace Gunner.Engine
                         dr.ErrorCode = (int)response.StatusCode;
                     }
                 }
-                if (logErrors) LogError(url, we, logPath);
+                _errorLogger.LogError(url, we);
                 return dr;
             }
             catch (Exception ex)
             {
-                if (logErrors) LogError(url, ex, logPath);
+                _errorLogger.LogError(url, ex);
                 dr.Success = false;
                 return dr;
             }

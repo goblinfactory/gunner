@@ -36,16 +36,6 @@ namespace Gunner.Engine
     }
 
 
-    public static class DictionaryHelper
-    {
-        public static void Increment(this Dictionary<int, int> dictionary, int key, int increment = 1)
-        {
-            int i;
-            dictionary.TryGetValue(key, out i);
-            dictionary[key] = i + increment;
-        }
-    }
-
     public class Status
     {
         public int Code { get; set; }
@@ -59,18 +49,7 @@ namespace Gunner.Engine
     public class DownloadResult
     {
         public int? ErrorCode { get; set; }
-        /// <summary>
-        /// result was 2xx and result string contained correct match.
-        /// </summary>
         public bool Success { get; set; }
-        
-        // NB! it would be useful to isolate any unexpected traffic by looking at where the ratio between these two numbers is not consistent during testing.
-
-        /// <summary>
-        /// Total bytes sent over the wire, including application overheads, SSL + ANY OTHER Traffic over this nic at the same time!
-        /// </summary>
-        public long xxxNetworkTrafficBytes { get; set; }
-
     }
 
 }

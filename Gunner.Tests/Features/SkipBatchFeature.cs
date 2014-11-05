@@ -1,70 +1,108 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gunner.Engine;
+using Gunner.Tests.Internal;
+using Gunner.Tests.Mocks;
+using NUnit.Framework;
 
-//namespace Gunner.Tests.Features
-//{
-//    [TestFixture]
-//    class SkipBatchFeature
-//    {
-//        [Test]
-//        [Category("fast")]
-//        [TestCase(5, 2, 3)]
-//        [TestCase(7, 0, 7)]
-//        [TestCase(4, -1, 4)]
-//        public void SkippedBatchesShouldNotBeLogged(int batches, int skipBatches, int cntLogged)
-//        {
-//            // given a gunner script with 5 batches
-//            // and skipbatch = 3
-//            // when the script is run
-//            // only 3 batches should be logged
-//        }
+namespace Gunner.Tests.Features
+{
+    [TestFixture]
+    class SkipBatchFeature
+    {
 
-
-    
-
-//        [Test]
-//        public void SkippedBatchesShouldNotCountTowardsStatisticResults()
-//        {
-
-//        }
-
-
-//        #region step definitions
-
-//        private void Given_Gunner(int repeat)
-//        {
-//            Test.TraceStep();
-//            var options = new Options()
-//            {
-//                Start = 50,
-//                End = 300,
-//                Pause = 0,
-//                Gap = 20,
-//                Repeat = repeat,
-//                Logfile = "ConfidenceFeature.log",
-//                Find = Settings.TestFileContains,
-//                Root = Settings.Root,
-//                Increment = 50,
-//                UrlList = Settings.TestFile,
-//                Timeout = 200,
-//                Verbose = false
-//            };
-//            // should I use a builder?
-//            _logwriter = new MockLogwriter(false);
-//            var metricMonitoring = new MetricMonitoring(PerformanceMetric.RequestsPerSecond);
-//            var trafficMonitor = new NetworkTrafficMonitor();
-//            var urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
-//            //NB! Move errors and lastflush into Downloader class! or into errorlogger that's passed to downloader
-//            var downloader = new Downloader(_errors, ref _lastFlush);
-//            _gunner = new MachineGun(downloader, options, _logwriter, urls, trafficMonitor, metricMonitoring);
-//        }
-
-//        #endregion
-//    }
+        // =========================================================================================================
+        //
+        //                                                  REQUIREMENTS
+        //
+        // =========================================================================================================
+        
+        [Test]
+        [Category("fast")]
+        [TestCase(5, 2, 3)]
+        [TestCase(7, 0, 7)]
+        [TestCase(4, -1, 4)]
+        public void SkippedBatchesShouldNotBeLogged(int batches, int skipBatches, int cntLogged)
+        {
+            // given a gunner script that will result in 5 batches
+            
+            Given_Gunner_options_that_will_result_in_X_batches(batches);
+            Given_option_skip_batches_of(2);
+            When_Gunner_is_run();
+            // 5 batches should be diplayed to the screen
+            // the first 2 batches will end with ** SKIPPED
+            // the last 3 batches will not end with **SKIPPED
+            // the skipped batches should not be logged
+        }
 
 
-//}
+
+
+        [Test]
+        public void SkippedBatchesShouldNotCountTowardsStatisticResults()
+        {
+
+        }
+
+        // =========================================================================================================
+        //
+        //                                                   BINDINGS
+        //
+        // =========================================================================================================
+
+        #region bindings
+
+        //private MockLogwriter _logwriter;
+
+        private Options _options;
+
+        private void Given_Gunner_options_that_will_result_in_X_batches(int batches)
+        {
+            Test.TraceStep(batches);
+            int increment = 5;
+            int start = 10;
+            _options = new Options
+            {
+                Start = 10,
+                End = start + (increment*(batches-1)),
+                Pause = 0,
+                Gap = 0,
+                Repeat = 5,
+                Logfile = "SkipBatchFeature.log",
+                Find = Settings.TestFileContains,
+                Root = Settings.Root,
+                Increment = increment,
+                UrlList = Settings.TestFile,
+                Timeout = 3,
+                Verbose = false
+            };
+        }
+
+        private void Given_option_skip_batches_of(int i)
+        {
+            Test.TraceStep(i);
+            _options.SkipBatches = i;
+        }
+
+        private void When_Gunner_is_run()
+        {
+            Test.TraceStep();
+            var logwriter = new MockLogwriter(false);
+            var metricMonitoring = new NullMetricMonitor();
+            var trafficMonitor = new MockTrafficMonitor(100);
+            var urls = new[] { "file1.json", "file2.json" };
+            var downloader = new MockDownloader(new DownloadResult { ErrorCode = null, Success = true });
+            var reporter = new Reporter(_options, logwriter);
+            var gunner = new MachineGun(reporter,downloader,_options, urls, trafficMonitor, metricMonitoring);
+            Task.WaitAll(gunner.Run());
+        }
+
+        #endregion
+
+    }
+
+      
+}

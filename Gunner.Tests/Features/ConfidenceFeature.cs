@@ -66,7 +66,7 @@ namespace Gunner.Tests.Features
 
         // =========================================================================================================
         //
-        //                                                STEP DEFINITIONS
+        //                                                BINDINGS
         //
         // =========================================================================================================
 
@@ -77,8 +77,6 @@ namespace Gunner.Tests.Features
         private MockLogwriter _logwriter;
         private Task _task;
         private List<BatchRunResult> _results;
-        private DateTime _lastFlush = DateTime.Now;
-        private readonly List<string> _errors = new List<string>();
 
         private void Given_Gunner(int repeat)
         {
@@ -98,14 +96,14 @@ namespace Gunner.Tests.Features
                     Timeout = 200,
                     Verbose = false
                 };
-            // should I use a builder?
             _logwriter = new MockLogwriter(false);
             var metricMonitoring = new MetricMonitoring(PerformanceMetric.RequestsPerSecond);
             var trafficMonitor = new NetworkTrafficMonitor();
             var urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
-            //NB! Move errors and lastflush into Downloader class! or into errorlogger that's passed to downloader
-            var downloader = new Downloader(_errors, ref _lastFlush);
-            _gunner = new MachineGun(downloader, options,_logwriter, urls, trafficMonitor, metricMonitoring);
+            var errorLogger = new MockErrorLogger(true);
+            var downloader = new Downloader(errorLogger);
+            var reporter = new Reporter(options, _logwriter);
+            _gunner = new MachineGun(reporter, downloader, options, urls, trafficMonitor, metricMonitoring);
         }
 
         private void Given_a_webserver()

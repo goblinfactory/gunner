@@ -9,9 +9,11 @@ namespace Gunner.Engine
     {
         public Options()
         {
+            // some useful defaults for testing
             Header = Options._defaultHeader;
             Format = Options._defaultFormat;
             Delimiter = ",";
+            LogErrors = false;
             Timeout = 300;
             StaggerStart = 100;
         }
@@ -23,6 +25,10 @@ namespace Gunner.Engine
         [Option('b', "logerrors", DefaultValue = false,
             HelpText = "Whether to log errors or not. If you have errors, to reproduce just do a single run with 1 user afterwards with repeat set to = max urls in your csv file.")]
         public bool LogErrors { get; set; }
+
+        [Option( "errorfile", DefaultValue = "",
+            HelpText = "Error logfile to write out individual errors to. Useful if you want to run a single test batch to check entities before running a load test. (sanity check first.) Differential between system performance issues, and application or user errors. i.e. should not run a load test if a sanity check test fails.")]
+        public string ErrorLogfile { get; set; }
 
 
         [Option('c', "cachebuster", DefaultValue = false,

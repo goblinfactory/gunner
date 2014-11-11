@@ -20,7 +20,6 @@ namespace Gunner.Engine
 
     public class Reporter : IReporter
     {
-        public const string Title = "Gunner v 0.1";
         private readonly IReporterFormat _format;
         private readonly ILogWriter _logwriter;
 
@@ -32,7 +31,6 @@ namespace Gunner.Engine
 
         public void WriteFormattedBatchResultHeading()
         {
-            Console.WriteLine(Title);
             Console.WriteLine(_format.Header);
         }
 

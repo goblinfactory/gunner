@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Build\Build.cs" />
     <Compile Include="Features\ConfidenceFeature.cs" />
+    <Compile Include="Features\LogErrorsFeature.cs" />
     <Compile Include="Features\SkipBatchFeature.cs" />
     <Compile Include="Internal\Settings.cs" />
     <Compile Include="Internal\TestHelper.cs" />

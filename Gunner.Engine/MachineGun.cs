@@ -14,6 +14,16 @@ namespace Gunner.Engine
 {
     public class MachineGun
     {
+        public string GetVersion()
+        {
+            var name = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+            return string.Format("{0}.{1}.{2}.{3}",
+                                 name.Version.Major,
+                                 name.Version.MajorRevision,
+                                 name.Version.Minor,
+                                 name.Version.MinorRevision);
+        }
+
         public bool IsRunning { get; set; }
         private readonly IReporter _reporter;
         private readonly IDownloader _downloader;
@@ -56,7 +66,11 @@ namespace Gunner.Engine
 
         public async Task Run()
         {
-            if (_metricMonitoring.SystemBeingMonitoredIsCold) FireOneShotAcrossTheBowAndWakeThatSuckerUp();
+            Console.WriteLine("Gunner ver:{0}", GetVersion());
+            if (_options.WarningShot) 
+                FireOneShotAcrossTheBowAndWakeThatSuckerUp();
+            else if (_metricMonitoring.SystemBeingMonitoredIsCold) 
+                FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             _reporter.WriteFormattedBatchResultHeading();
             if (_options.Verbose)
             {

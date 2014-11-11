@@ -46,8 +46,6 @@ namespace Gunner.Console
 
             var factory = new Factory();
             var machineGun = factory.CreateMachineGun(options);
-            if (options.WarningShot)
-                machineGun.FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             Task.WaitAll(new[] { machineGun.Run() }); 
         }
 

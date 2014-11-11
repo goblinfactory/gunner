@@ -16,7 +16,7 @@ namespace Gunner.Console
             var urls =              new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
             ILogWriter logwriter    = new LogWriter(options.Logfile);
             var trafficMonitor      = new NetworkTrafficMonitor();
-            var errorLogger         = new ErrorLogger("notused-yet!",false);
+            var errorLogger         = new ErrorLogger(options.ErrorLogfile,options.LogErrors);
             var downloader          = new Downloader(errorLogger);
             var reporter            = new Reporter(options, logwriter);
             

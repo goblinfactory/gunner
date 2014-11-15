@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,8 +8,39 @@ namespace Gunner.Engine
 {
     public interface ILogWriter
     {
-        void AppendLine(string text);
+        void WriteLine(string line);
+        void Write(string text);
     }
+
+    public static class LogWriterExtensions
+    {
+
+        public static void WriteLine(this ILogWriter writer, string format, params object[] args)
+        {
+            var text = string.Format(format, args);
+            writer.WriteLine(text);
+        }
+
+
+        public static void WriteLine(this ILogWriter[] writers, string format, params object[] args)
+        {
+            var text = string.Format(format, args);
+            foreach (var writer in writers) writer.WriteLine(text);
+        }
+
+        public static void Write(this ILogWriter writer, string format, params object[] args)
+        {
+            var text = string.Format(format, args);
+            writer.Write(text);
+        }
+
+        public static void Write(this ILogWriter[] writers,string format, params object[] args)
+        {
+            var text = string.Format(format, args);
+            foreach (var writer in writers) writer.Write(text);
+        }
+    }
+
 
     public class LogWriter : ILogWriter
     {
@@ -21,10 +51,16 @@ namespace Gunner.Engine
             _logFilePath = logFilePath;
         }
 
-        public void AppendLine(string text)
+        public void WriteLine(string line)
         {
             if (!string.IsNullOrWhiteSpace(_logFilePath))
-                File.AppendAllLines(_logFilePath, new[] { text });
+                File.AppendAllLines(_logFilePath, new[] { line });
+        }
+
+        public void Write(string text)
+        {
+            if (!string.IsNullOrWhiteSpace(_logFilePath))
+                File.AppendAllText(_logFilePath, text);
         }
     }
 }

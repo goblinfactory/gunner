@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Gunner.Console\TestLocal.bat = Gunner.Console\TestLocal.bat
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Mechanic", "Gunner.Mechanic\Gunner.Mechanic.csproj", "{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FFE82A5-DC5F-47B7-B1C0-B12EEDA6AE25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

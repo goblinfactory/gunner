@@ -1,0 +1,48 @@
+MASTER SLAVE NOTES
+==================
+
+Diagnostic Tools To Help Diagnose Gunner Requirements
+
+- first things to check 
+ - that the machines can see each other and that ports are not blocked!
+ - how?
+
+> mechanic listen --port 9090 --response "{message} yourself!" --cnt 0
+output:  
+	> recieved "hello"
+	> sent "hello yourself!"
+
+> mechanic send --port 9090 --message "hello" -c 5
+output: 
+	<- hello1 -> hello1 yourself!
+	<- hello2 -> hello2 yourself!
+	<- hello3 -> hello3 yourself!
+	<- hello4 -> hello4 yourself!
+	<- hello5 -> hello5 yourself!
+	end.
+
+samples
+=======
+> mechanic listen -p 9090 -r "<h1>hello {message}</h1>" -c 4
+	output:
+	listening on port 9090 for 4 messages
+	-> hello1 -> hello1 yourself! 
+	-> hello2 -> hello2 yourself! 
+	-> hello3 -> hello3 yourself! 
+	-> hello4 -> hello4 yourself! 
+	-> hello5 -> hello5 yourself! 
+	end.
+> mechanic listen -p 9090 "<h1>{message} yourself!</h1>" 3
+	output:
+	listening on port 9090 for 3 messages
+	(1) -> hello1 -> hello1 yourself! 
+	(2) -> hello2 -> hello2 yourself! 
+	(3) -> hello3 -> hello3 yourself! 
+	end.
+> mechanic test send -s 127.0.0.1 -p 80 "hello" 
+
+using defaults
+==============
+ mechanic listen 
+  // port = 9090, cnt = 1, server = 127.0.0.1, response = "{message} recieved.", msPause = 0
+ mechanic send 

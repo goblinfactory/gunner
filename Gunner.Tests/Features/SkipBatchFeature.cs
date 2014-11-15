@@ -90,7 +90,7 @@ namespace Gunner.Tests.Features
         private void When_Gunner_is_run()
         {
             Test.TraceStep();
-            var logwriter = new MockLogwriter(false);
+            var logwriter = new MockLogWriter(false);
             var metricMonitoring = new NullMetricMonitor();
             var trafficMonitor = new MockTrafficMonitor(100);
             var urls = new[] { "file1.json", "file2.json" };

@@ -7,26 +7,36 @@ using Gunner.Engine;
 
 namespace Gunner.Tests.Mocks
 {
-    public class MockLogwriter : ILogWriter
+    public class MockLogWriter : ILogWriter
     {
+        private string partLine = "";
         private readonly bool _echoConsole;
         private readonly List<string> _lines = new List<string>(); 
         
-        public MockLogwriter(bool echoConsole)
+        public MockLogWriter(bool echoConsole)
         {
             _echoConsole = echoConsole;
         }
 
-        public void AppendLine(string text)
+        public void WriteLine(string line)
         {
-            _lines.Add(text);
-            if(_echoConsole) Console.WriteLine(text);
-            
+            var fullLine = string.Format("{0}{1}", partLine, line);
+            _lines.Add(fullLine);
+            if (_echoConsole) Console.WriteLine(fullLine);
+            partLine = "";
+
+        }
+
+        public void Write(string text)
+        {
+            partLine = text;
         }
 
         public List<string> ReadLines()
         {
-            return _lines;
+            var lines = _lines.ToList();
+            if (! string.IsNullOrWhiteSpace(partLine)) lines.Add(partLine);
+            return lines;
         } 
     }
 }

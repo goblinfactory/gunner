@@ -50,7 +50,7 @@ namespace Gunner.Engine
             );
             Console.Write(logline);
             Console.WriteLine(" {0}", batch);
-            if (_logwriter != null) _logwriter.AppendLine(logline + " " + batch);
+            if (_logwriter != null) _logwriter.WriteLine(logline + " " + batch);
         }
     }
 }

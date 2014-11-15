@@ -74,7 +74,7 @@ namespace Gunner.Tests.Features
 
 
         private MachineGun _gunner;
-        private MockLogwriter _logwriter;
+        private MockLogWriter _logwriter;
         private Task _task;
         private List<BatchRunResult> _results;
 
@@ -96,7 +96,7 @@ namespace Gunner.Tests.Features
                     Timeout = 200,
                     Verbose = false
                 };
-            _logwriter = new MockLogwriter(false);
+            _logwriter = new MockLogWriter(false);
             var metricMonitoring = new MetricMonitoring(PerformanceMetric.RequestsPerSecond);
             var trafficMonitor = new NetworkTrafficMonitor();
             var urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);

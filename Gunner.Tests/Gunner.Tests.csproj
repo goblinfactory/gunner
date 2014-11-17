@@ -33,6 +33,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ApprovalTests">
+      <HintPath>..\packages\ApprovalTests.3.0.7\lib\net40\ApprovalTests.dll</HintPath>
+    </Reference>
+    <Reference Include="ApprovalUtilities">
+      <HintPath>..\packages\ApprovalUtilities.3.0.7\lib\net35\ApprovalUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="FluentAssertions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentAssertions.2.2.0.0\lib\net35\FluentAssertions.dll</HintPath>
@@ -57,11 +63,12 @@
   <ItemGroup>
     <Compile Include="Build\Build.cs" />
     <Compile Include="Features\ConfidenceFeature.cs" />
+    <Compile Include="Features\_FeatureBootstrapper.cs" />
     <Compile Include="Features\LogErrorsFeature.cs" />
     <Compile Include="Features\SkipBatchFeature.cs" />
     <Compile Include="Internal\Settings.cs" />
     <Compile Include="Internal\TestHelper.cs" />
-    <Compile Include="Features\ClientServerTests.cs" />
+    <Compile Include="Features\MasterSlaveTests.cs" />
     <Compile Include="Features\MechanicTests.cs" />
     <Compile Include="Mocks\MockDownloader.cs" />
     <Compile Include="Mocks\MockErrorLogger.cs" />
@@ -70,6 +77,7 @@
     <Compile Include="PerformanceMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Build\CreatePackage.cs" />
+    <Compile Include="Unit\MQExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,6 +92,7 @@
       <Name>Gunner.Mechanic</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

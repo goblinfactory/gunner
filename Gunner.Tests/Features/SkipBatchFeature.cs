@@ -20,7 +20,7 @@ namespace Gunner.Tests.Features
         //
         // =========================================================================================================
         
-        [Test]
+        [Test, Ignore("still to do.")]
         [Category("fast")]
         [TestCase(5, 2, 3)]
         [TestCase(7, 0, 7)]

@@ -1,0 +1,5 @@
+﻿sendwriter[0] = Opening connection to :tcp://127.0.0.1:9090
+sendwriter[1] = -> hello1 -> hello1 received
+sendwriter[2] = -> hello2 -> hello2 received
+sendwriter[3] = -> hello3 -> hello3 received
+sendwriter[4] = closing connection.

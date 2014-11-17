@@ -23,7 +23,7 @@ output:
 
 samples
 =======
-> mechanic listen -p 9090 -r "<h1>hello {message}</h1>" -c 4
+> mechanic listen -p 9090 -r "hello {message}" -c 4
 	output:
 	listening on port 9090 for 4 messages
 	-> hello1 -> hello1 yourself! 
@@ -32,7 +32,7 @@ samples
 	-> hello4 -> hello4 yourself! 
 	-> hello5 -> hello5 yourself! 
 	end.
-> mechanic listen -p 9090 "<h1>{message} yourself!</h1>" 3
+> mechanic listen -p 9090 "{message} yourself!" 3
 	output:
 	listening on port 9090 for 3 messages
 	(1) -> hello1 -> hello1 yourself! 
@@ -46,3 +46,18 @@ using defaults
  mechanic listen 
   // port = 9090, cnt = 1, server = 127.0.0.1, response = "{message} recieved.", msPause = 0
  mechanic send 
+
+
+Words STARTING With Capitals Are Yellow
+words: ending: with: colons:
+ - start lists with dash
+  - asdasd
+ # comments with hash
+ > accent an item with greater than
+  underline headings
+ ==================
+"any text inside quotes is different color"
+
+
+NB! to do, decide how to use approvals with the project, otherwise other people will not be able to run the project
+	without requiring beyond compare reporter installed!!! so no good for open source project, drat! pity.

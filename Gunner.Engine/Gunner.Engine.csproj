@@ -40,6 +40,12 @@
     <Reference Include="NetMQ">
       <HintPath>..\packages\NetMQ.3.3.0.11\lib\net40\NetMQ.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -60,12 +66,13 @@
     <Compile Include="IMetricMonitoring.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="Mechanic\MechanicOptions.cs" />
-    <Compile Include="Mechanic\SimpleSocketMessenger.cs" />
+    <Compile Include="Mechanic\SimpleSocketTester.cs" />
     <Compile Include="MemoryHelper.cs" />
     <Compile Include="NetworkTraffic.cs" />
     <Compile Include="NetworkTrafficMonitor.cs" />
     <Compile Include="MetricMonitoring.cs" />
     <Compile Include="NullMetricMonitor.cs" />
+    <Compile Include="MQExtensions.cs" />
     <Compile Include="Reporter.cs" />
     <Compile Include="UserRunResult.cs" />
     <Compile Include="MachineGun.cs" />

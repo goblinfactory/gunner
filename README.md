@@ -115,6 +115,11 @@ Immediate Current work
 
  - CSV input of urls. If any of the urls passed is a file, then url values will be read from the file. Two values per line -> url, find
  
+Todo
+---
+
+1. Update this readme. As of 16/11/14, this is a bit out of date. Oops!
+1. Install script that checks that IIS is available, and if yes, creates localhost:8082 website, so that unit tests for performance will be able to be run.
 
 Roadmap (high priority ideas)
 ---

@@ -51,7 +51,7 @@ namespace Gunner.Tests.Features
         }
 
         [Test]
-        [Category("slow"), Ignore("Run manually.")]
+        [Category("slow")]
         public void ShouldBeAbleToTrustResultsForTestsWithSmallSampleSizes()
         {
             // note: where small = > 200 samples, and time > 5 seconds
@@ -83,15 +83,15 @@ namespace Gunner.Tests.Features
             Test.TraceStep();
             var options = new Options()
                 {
-                    Start = 50,
-                    End = 300,
+                    Start = 10,
+                    End = 30,
                     Pause = 0,
                     Gap = 20,
                     Repeat = repeat,
                     Logfile = "ConfidenceFeature.log",
                     Find = Settings.TestFileContains,
                     Root =  Settings.Root,
-                    Increment = 50,
+                    Increment = 10,
                     UrlList = Settings.TestFile,
                     Timeout = 200,
                     Verbose = false
@@ -109,9 +109,7 @@ namespace Gunner.Tests.Features
         private void Given_a_webserver()
         {
             Test.TraceStep();
-            var client = new WebClient();
-            var result = client.DownloadString(Settings.Root + Settings.TestFile);
-            result.Should().Contain(Settings.TestFileContains);
+            _FeatureBootstrapper.WarmupWebsite();
         }
 
         private void When_gunner_is_run()
@@ -143,8 +141,8 @@ namespace Gunner.Tests.Features
                     var rpsMetric = r.Metrics.First(m => m.Metric == PerformanceMetric.RequestsPerSecond).Value;
                     var deviation = (1F - (rpsMetric/r.RequestsPerSecond))*100;
                     Console.WriteLine("{0,7:0.00},{1,7:0.00}, {2,7:0.00}%",r.RequestsPerSecond,rpsMetric,deviation);
-                    var min = lower * rpsMetric;
-                    var max = higher * rpsMetric; 
+                    var min = lower * r.RequestsPerSecond;
+                    var max = higher * r.RequestsPerSecond; 
                     r.RequestsPerSecond.Should().BeInRange(min, max);
                 });
         }

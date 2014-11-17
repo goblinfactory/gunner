@@ -15,16 +15,16 @@ namespace Gunner.Engine.Mechanic
         public string Reply { get; set; }
     }
 
-    public class SimpleSocketMessenger : IDisposable
+    public class SimpleSocketTester : IDisposable
     {
         private int _port;
         private readonly ILogWriter[] _writers;
         private string _bind;
         private NetMQContext _ctx;
 
-        public SimpleSocketMessenger(string server, int port) : this(server,port, new[] { (ILogWriter)new ConsoleWriter()}) {}
+        public SimpleSocketTester(string server, int port) : this(server,port, new[] { (ILogWriter)new ConsoleWriter()}) {}
 
-        public SimpleSocketMessenger(string server, int port, ILogWriter[] writers)
+        public SimpleSocketTester(string server, int port, ILogWriter[] writers)
         {
             _writers = writers;
             _bind = string.Format("tcp://{0}:{1}", server, port);
@@ -38,6 +38,7 @@ namespace Gunner.Engine.Mechanic
             var messageResponses = new List<RequestReply>();
             using (var socket = _ctx.CreateRequestSocket())
             {
+
                 socket.Connect(_bind);
                 _writers.WriteLine("Opening connection to :{0}", _bind);
                 foreach(var message in messages)
@@ -95,7 +96,7 @@ namespace Gunner.Engine.Mechanic
             GC.SuppressFinalize(this);
         }
 
-        ~SimpleSocketMessenger()
+        ~SimpleSocketTester()
         {
             Dispose(false);
         }

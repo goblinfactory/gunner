@@ -1,0 +1,5 @@
+﻿listenwriter[0] = Listening on port 9090 for 3 messages
+listenwriter[1] = -> hello1 -> hello1 received
+listenwriter[2] = -> hello2 -> hello2 received
+listenwriter[3] = -> hello3 -> hello3 received
+listenwriter[4] = listener closing connection.

@@ -14,6 +14,30 @@ namespace Gunner.Engine
         public PerformanceMetric Metric { get; set; }
     }
 
+    public static class TryWaitHelper
+    {
+        public static void TryWait(int msPauseBetweenTries, int maxTries, Type exType, Action action)
+        {
+            int cnt = 0;
+            while(cnt<maxTries)
+            {
+                try
+                {
+                    Console.WriteLine("trying {0}",cnt);
+                    action();
+                    return;
+                }
+                catch(Exception ex)
+                {
+                    if (ex.GetType() != exType) throw;
+                    cnt++;
+                    if (cnt>=maxTries) throw;
+                    Thread.Sleep(msPauseBetweenTries);
+                }
+            }
+        }
+    }
+
     public class MetricMonitoring : IMetricMonitoring, IDisposable
     {
         private List<MetricMonitor> _monitors;
@@ -25,16 +49,13 @@ namespace Gunner.Engine
         public bool SystemBeingMonitoredIsCold { get; set; }
         public MetricMonitoring(params PerformanceMetric[] metrics)
         {
+            SystemBeingMonitoredIsCold = true;
             _monitors = metrics.Select(m => m.ToCounter()).ToList();
-            try
-            {
-                _monitors.ForEach(m => m.Monitor.NextValue());
-                SystemBeingMonitoredIsCold = false;
-            }
-            catch (InvalidOperationException)
-            {
-                SystemBeingMonitoredIsCold = true;
-            }
+            TryWaitHelper.TryWait(500, 20, typeof(InvalidOperationException), () =>
+                {
+                    _monitors.ForEach(m => m.Monitor.NextValue());
+                    SystemBeingMonitoredIsCold = false;
+                });
         }
 
         public List<MetricValue> ReadMetrics()

@@ -21,7 +21,6 @@ namespace Gunner.Tests.Features
         // =========================================================================================================
 
         [Test]
-        [Category("fast")]
         public void Error404ShouldBeLoggedToFileIfErrorLoggingEnabled()
         {
             Test.TraceFeature();

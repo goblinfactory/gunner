@@ -7,7 +7,12 @@ using Gunner.Engine;
 
 namespace Gunner.Console
 {
-    public class Factory
+    public interface IMachineGunFactory
+    {
+        MachineGun CreateMachineGun(BatchOptions batchOptions, IMetricMonitoring metricMonitoring = null);
+    }
+
+    public class MachineGunFactory : IMachineGunFactory
     {
         public MachineGun CreateMachineGun(BatchOptions batchOptions, IMetricMonitoring metricMonitoring = null)
         {

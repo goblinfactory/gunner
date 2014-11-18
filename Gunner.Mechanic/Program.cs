@@ -51,13 +51,13 @@ namespace Gunner.Mechanic
             {
                 case Verb.listen:
                     var lo = (ListenSubOptions)invokedVerbInstance;
-                    using (var messenger = new SimpleSocketTester("127.0.0.1", lo.Port))
-                        messenger.RecieveMessage(lo.Response, lo.Cnt);
+                    using (var simpleSocketTester = new SimpleSocketTester("127.0.0.1", lo.Port))
+                        simpleSocketTester.RecieveMessage(lo.Response, lo.Cnt);
                     break;
                 case Verb.send:
                     var so = (SendSubOptions)invokedVerbInstance;
-                    using (var messenger = new SimpleSocketTester("127.0.0.1", so.Port))
-                        messenger.SendMessages(so.Wait, so.Messages);
+                    using (var simpleSocketTester = new SimpleSocketTester("127.0.0.1", so.Port))
+                        simpleSocketTester.SendMessages(so.Wait, so.Messages);
                     break;
                 default:throw new ArgumentOutOfRangeException("invokedVerb",invokedVerb,"not supported.");
             }

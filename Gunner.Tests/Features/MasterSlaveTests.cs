@@ -10,7 +10,7 @@
 //{
 //    public class ClientServerTests
 //    {
-//        [Test] 
+//        [Test]
 //        // perhaps need a timeout in case something goes wrong?
 //        public void ProveZeroMQConceptuallyWillSolveMasterSlave()
 //        {
@@ -43,7 +43,7 @@
 
 //        //public void GunnerShouldPublishBatchResultsToControllerIPAndPort()
 //        //{
-            
+
 //        //}
 
 //        public void GunnerShouldBeAbleToBeRemotelyStarted()
@@ -59,7 +59,7 @@
 //            WhenMasterGunnerStarts();
 //            ThenSlaveShouldRecieveTheMasterScript();
 //        }
- 
+
 
 //    }
 //}

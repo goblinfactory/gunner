@@ -11,10 +11,10 @@ using Gunner.Engine;
 
 namespace Gunner.Tests.Unit
 {
-    public class MQExtensionTests
+    public class ShouldBeAbleToSendAndRecieveGenericMessages
     {
         [Test]
-        public void ShouldBeAbleToSendAndRecieveGenericMessagesUsingProtobufSerialisation()
+        public void ShouldBeAbleToSendAndRecieveGenericMessagesUsingJsonStrings()
         {
             using (NetMQContext ctx = NetMQContext.Create())
             {
@@ -23,7 +23,7 @@ namespace Gunner.Tests.Unit
                     server.Bind("tcp://127.0.0.1:5556");
                     using (var client = ctx.CreateRequestSocket())
                     {
-                        var testSubmission = new TestSubmission() { Name = "Fred", Age = 5, Answers = new[] { "apples", "pears", "oranges" } };
+                        var testSubmission = new TestSubmission() { Name = "Fred", Age = 5, Answers = new[] { "Washington", "Snowcode is the world's highest free developer unconference", "2010 What year did snowcode start?" } };
                         client.Connect("tcp://127.0.0.1:5556");
                         Console.WriteLine("submitting test for student:{0}", testSubmission.Name);
                         client.SendT(testSubmission);
@@ -44,19 +44,21 @@ namespace Gunner.Tests.Unit
                 }
             }
         }
+
+        public class TestSubmission
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+            public string[] Answers { get; set; }
+        }
+
+        public class TestScore
+        {
+            public string Name { get; set; }
+            public string Score { get; set; }
+        }
+
     }
 
-    public class TestSubmission
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public string[] Answers { get; set; }
-    }
-
-    public class TestScore
-    {
-        public string Name { get; set; }
-        public string Score { get; set; }
-    }
 
 }

@@ -96,12 +96,6 @@ namespace Gunner.Engine
             HelpText = "Test timeout. Maximum time (in seconds) allowed for each (up to the final batch) to all return. (not yet done any decent reporting for when this happens. TODO)")]
         public int Timeout { get; set; }
 
-
-        //public string[] Urls
-        //{
-        //    get { return UrlList.Split(new string[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries); }
-        //}
-
         [Option('u', "urls", Required = false,
            HelpText = "delimited list of urls to test.  Each user will be assigned a url from the list of urls, using round robin.")]
         public string UrlList { get; set; }
@@ -121,14 +115,18 @@ namespace Gunner.Engine
         [Option("warningshot", Required = false, DefaultValue = false,
             HelpText = "Fire off 1 random request (warning shot) to wake up the server before starting any testing. Useful if you want to wake up a server with a single request.")]
         public bool WarningShot { get; set; }
-        
-        //[Option('a', "action", DefaultValue = "GET",
-        //   HelpText = "Prints all messages to standard output.")]
-        //public bool Action { get; set; }
 
-        //[Option('b', "body", DefaultValue = true,
-        //   HelpText = "Body of message to PUT,POST,DELETE,ADD etc")]
-        //public bool Body { get; set; }
+        [Option("master", Required = false, DefaultValue = null,
+        HelpText = "ip address of the server that gunner is running in master mode on.")]
+        public bool Master { get; set; }
+
+        [Option("port", Required = false, DefaultValue = null,
+        HelpText = "port that gunner is listening on. (this is the same port on all gunner masters or slaves.)")]
+        public int Port { get; set; }
+
+        [Option("mode", Required = false, DefaultValue = null,
+        HelpText = "master | slave | standalone (leave null, do not supply if running standalone.)")]
+        public bool Mode { get; set; }
 
         [HelpOption]
         public string GetUsage()

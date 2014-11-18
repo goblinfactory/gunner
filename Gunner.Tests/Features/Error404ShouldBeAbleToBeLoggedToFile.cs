@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace Gunner.Tests.Features
 {
     [TestFixture]
-    class LogErrorsFeature
+    class Error404ShouldBeAbleToBeLoggedToFile
     {
 
         // =========================================================================================================
@@ -57,6 +57,7 @@ namespace Gunner.Tests.Features
         private void Then_one_404_error_should_be_logged_to_the_error_file_per_invalid_url()
         {
             Test.TraceStep();
+            Assert.Inconclusive("test not finished yet.s");
         }
 
 

@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace Gunner.Tests.Features
 {
     [TestFixture]
-    public class ConfidenceFeature
+    public class ShouldBeAbleToTrustResultsForTests
     {
         // =========================================================================================================
         //

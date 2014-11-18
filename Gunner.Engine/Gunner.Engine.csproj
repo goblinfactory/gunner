@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatchRunResult.cs" />
+    <Compile Include="BuildHelper.cs" />
     <Compile Include="ConsoleWriter.cs" />
     <Compile Include="ConvertExtensions.cs" />
     <Compile Include="DictionaryHelper.cs" />

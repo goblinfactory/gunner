@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
+using Gunner.Engine;
 using Gunner.Tests.Internal;
 using Ionic.Zip;
 using NUnit.Framework;
@@ -29,10 +30,12 @@ namespace Gunner.Tests.Build
             @"..\..\..\readme.md"
         };
 
-        string _version =  "Gunner.1.0.zip";
+        string _version =  "Gunner." + BuildHelper.GetVersion() + ".zip";
 
         // ------------------------------------------------------------------------------------------
+        //
         //                                           CREATE PACKAGE 
+        //
         // ------------------------------------------------------------------------------------------
 
         [Test]
@@ -42,18 +45,21 @@ namespace Gunner.Tests.Build
             GivenAllTheCorrectFilesAreInTheReleaseFolders();
             WhenICreateAPackage();
             ThenThePackageIsCreated();
-            AndThePackageShouldBeNamedAccordingToTheVersionNumber();
+            AndThePackageShouldBeNamedAccordingToTheBuildNumber();
             AndThePackageLastModifiedDateTimeShouldBeCurrent();
         }
 
 
         // ------------------------------------------------------------------------------------------
+        //
         //                                          STEP DEFINITIONS
+        //
         // ------------------------------------------------------------------------------------------
 
 
         private List<FileInfo> _packageFIs;
         private DirectoryInfo _buildOutputPath;
+        private DirectoryInfo _binOutputPath;
         private FileInfo _package;
 
         public void GivenAllTheCorrectFilesAreInTheReleaseFolders()
@@ -75,12 +81,19 @@ namespace Gunner.Tests.Build
         {
             Test.TraceStep();
             _buildOutputPath = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, @"..\..\..\build"));
+            _binOutputPath = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, @"..\..\..\build\bin"));
             Console.WriteLine( _buildOutputPath.FullName);
             var packagePath = _buildOutputPath + @"\" + _version;
             _package = new FileInfo(packagePath);
+            _binOutputPath.GetFiles().ToList().ForEach(f=> f.Delete());
             using (ZipFile zip = new ZipFile())
             {
-                _packageFIs.ForEach(f => zip.AddFile(f.FullName, ""));
+                _packageFIs.ForEach(f =>
+                    {
+                        zip.AddFile(f.FullName, "");
+                        File.Copy(f.FullName,Path.Combine(_binOutputPath.FullName,f.Name));
+                    });
+                
                 zip.Save(packagePath);
             }
         }
@@ -91,12 +104,11 @@ namespace Gunner.Tests.Build
             _buildOutputPath.GetFiles().Where(f => f.Name.Contains(_version)).Should().NotBeNull();
         }
 
-        private void AndThePackageShouldBeNamedAccordingToTheVersionNumber()
+        private void AndThePackageShouldBeNamedAccordingToTheBuildNumber()
         {
             Test.TraceStep();
             var files = _buildOutputPath.GetFiles().Where(f => f.Name.EndsWith(".zip"));
-            files.Count().Should().Be(1);
-            var zip = files.ElementAt(0);
+            var zip = files.OrderByDescending(z=> z.Name).Last();
             zip.Name.Should().Be(_version);
         }
 

@@ -6,22 +6,20 @@ A design goal from the outset was to have as small a memory and cpu usage footpr
 
 Compatibility:
 ---
-- .NET Framework 4.5+
+- .NET Framework 4.0+
 - Untested on Mono.  
 
 Current Release:
 ---
-- This is a __pre-release proof of concept__, no test project yet.
-- Not yet stable; currently busy with manually correlating calcuated response times and requests per second with performance counter values. (see notes)
+- Status is beta.
 
 At a glance:
 ---
 - xcopy deployable.
-- For now, only supports IPv4 and one NIC _(If more than 1 nic, uses the first ethernet nic. If using wifi, measuring 'actual' network traffic currently not enabled.)_
-- Lots of similarities to curl. 
+- Lots of similarities to curl and 
 - One line server load testing.
 - Low memory footprint (500 users at only 40Mb memory footprint.)
-- [High throughput ( tested > 7000 rps)](/PERFORMANCE.md)
+- [High throughput ( tested > 7000 rps)]
 - High concurrency ( needs data. This was initially one of the drivers for writing gunner, to test concurrency, however throughput, requests per second, has since taken centre stage wrt priority. )
 - Easy to use, get up and running and testing, in seconds.
 - Use as a simple diagnostic tool to quickly identify network bottlenecks and test NFR's. (needs example)

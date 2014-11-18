@@ -5,13 +5,13 @@ using CommandLine.Text;
 
 namespace Gunner.Engine
 {
-    public class Options : IUrlReader, IReporterFormat
+    public class BatchOptions : IUrlReader, IReporterFormat
     {
-        public Options()
+        public BatchOptions()
         {
             // some useful defaults for testing
-            Header = Options._defaultHeader;
-            Format = Options._defaultFormat;
+            Header = BatchOptions._defaultHeader;
+            Format = BatchOptions._defaultFormat;
             Delimiter = ",";
             LogErrors = false;
             Timeout = 300;
@@ -56,7 +56,7 @@ namespace Gunner.Engine
 
         public const string _defaultHeader = "date----------------,----total,--------rps,--users,success,---fail,--response,--MB (in),---MB(out),---------MB(RAM)";
                                             //"2014-10-26 20:55:19Z,       50,    1351.35,     50,      0,     50,  0.7400ms,   0.00Mb,    0.00Mb, (   20.7Mb ram)
-        [Option('h', "header", DefaultValue = Options._defaultHeader,
+        [Option('h', "header", DefaultValue = BatchOptions._defaultHeader,
         HelpText = "Default header for formatting the console output.")]
         public string Header { get; set; }
 

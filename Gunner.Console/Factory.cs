@@ -9,18 +9,18 @@ namespace Gunner.Console
 {
     public class Factory
     {
-        public MachineGun CreateMachineGun(Options options, IMetricMonitoring metricMonitoring = null)
+        public MachineGun CreateMachineGun(BatchOptions batchOptions, IMetricMonitoring metricMonitoring = null)
         {
             // dependancies
             // ============
-            var urls =              new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
-            ILogWriter logwriter    = new LogWriter(options.Logfile);
+            var urls =              new UrlReader(batchOptions).ReadUrls(Environment.CurrentDirectory);
+            ILogWriter logwriter    = new LogWriter(batchOptions.Logfile);
             var trafficMonitor      = new NetworkTrafficMonitor();
-            var errorLogger         = new ErrorLogger(options.ErrorLogfile,options.LogErrors);
+            var errorLogger         = new ErrorLogger(batchOptions.ErrorLogfile,batchOptions.LogErrors);
             var downloader          = new Downloader(errorLogger);
-            var reporter            = new Reporter(options, logwriter);
+            var reporter            = new Reporter(batchOptions, logwriter);
             
-            var machineGun = new MachineGun(reporter,downloader,options, urls, trafficMonitor, metricMonitoring);
+            var machineGun = new MachineGun(reporter,downloader,batchOptions, urls, trafficMonitor, metricMonitoring);
             return machineGun;
         }
     }

@@ -18,7 +18,7 @@ namespace Gunner.Engine
         public bool IsRunning { get; set; }
         private readonly IReporter _reporter;
         private readonly IDownloader _downloader;
-        private readonly Options _options;
+        private readonly BatchOptions _batchOptions;
         private readonly IMetricMonitoring _metricMonitoring;
         private readonly ITrafficMonitor _trafficMonitor;
         private readonly ILogWriter _logWriter;
@@ -30,11 +30,11 @@ namespace Gunner.Engine
         }
 
 
-        public MachineGun(IReporter reporter, IDownloader downloader, Options options,  string[] urls, ITrafficMonitor trafficMonitor, IMetricMonitoring metricMonitoring = null)
+        public MachineGun(IReporter reporter, IDownloader downloader, BatchOptions batchOptions,  string[] urls, ITrafficMonitor trafficMonitor, IMetricMonitoring metricMonitoring = null)
         {
             _reporter = reporter;
             _downloader = downloader;
-            _options = options;
+            _batchOptions = batchOptions;
             _metricMonitoring = metricMonitoring ?? new NullMetricMonitor();
             _trafficMonitor = trafficMonitor;
             _urls = urls; 
@@ -58,20 +58,20 @@ namespace Gunner.Engine
         public async Task Run()
         {
             Console.WriteLine("Gunner ver:{0}", BuildHelper.GetVersion());
-            if (_options.WarningShot) 
+            if (_batchOptions.WarningShot) 
                 FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             else if (_metricMonitoring.SystemBeingMonitoredIsCold) 
                 FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             _reporter.WriteFormattedBatchResultHeading();
-            if (_options.Verbose)
+            if (_batchOptions.Verbose)
             {
                 Console.WriteLine("------ test settings ------");
                 Console.WriteLine("{0} to {1} step {2}. \n{3} req's/user. {4}ms between batches.",
-                _options.Start,
-                _options.End,
-                _options.Increment,
-                _options.Repeat,
-                _options.Pause);
+                _batchOptions.Start,
+                _batchOptions.End,
+                _batchOptions.Increment,
+                _batchOptions.Repeat,
+                _batchOptions.Pause);
                 Console.WriteLine("Endpoints (urls):");
                 int x = 0;
                 _urls.ToList().ForEach(u=> Console.WriteLine("    {0}.{1}",++x,u));
@@ -83,14 +83,14 @@ namespace Gunner.Engine
             var sw = new Stopwatch();
             sw.Start();
             int batchNumber = 1;
-            for (int batch =  _options.Start; batch <= _options.End; batch += _options.Increment)
+            for (int batch =  _batchOptions.Start; batch <= _batchOptions.End; batch += _batchOptions.Increment)
             {
                 batchNumber++;
-                bool skipBatch = (batchNumber <= _options.SkipBatches);
-                BatchRunResult batchResult = await TestCocurrentRequests(_reporter, batchNumber,_downloader, skipBatch, _metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _options, batch, _options.Repeat, _options.Gap);
+                bool skipBatch = (batchNumber <= _batchOptions.SkipBatches);
+                BatchRunResult batchResult = await TestCocurrentRequests(_reporter, batchNumber,_downloader, skipBatch, _metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _batchOptions, batch, _batchOptions.Repeat, _batchOptions.Gap);
                 _batchRunResults.Add(batchResult);
                 grandTotal += batchResult.Total;
-                Thread.Sleep(_options.Pause);
+                Thread.Sleep(_batchOptions.Pause);
             }
             sw.Stop();
             IsRunning = false;
@@ -99,7 +99,7 @@ namespace Gunner.Engine
         }
         
         // pass in test state DTO
-        static async Task<BatchRunResult> TestCocurrentRequests(IReporter reporter, int batchNumber, IDownloader downloader, bool skipBatch, IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, Options options, int users, int repeat, int pauseBetweenRequests)
+        static async Task<BatchRunResult> TestCocurrentRequests(IReporter reporter, int batchNumber, IDownloader downloader, bool skipBatch, IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, BatchOptions batchOptions, int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult(batchNumber);
             network.StartMonitoring();
@@ -118,13 +118,13 @@ namespace Gunner.Engine
                         using (var client = new WebClient())
                         {
                             // stagger
-                            await Task.Delay(new Random().Next(options.StaggerStart));
+                            await Task.Delay(new Random().Next(batchOptions.StaggerStart));
                             for (int r = 0; r < repeat; r++)
                             {
-                                var url = GetUrl(r, options.Cachebuster);
-                                var dr = downloader.Download(url, client, options.Find, options.Cachebuster);
+                                var url = GetUrl(r, batchOptions.Cachebuster);
+                                var dr = downloader.Download(url, client, batchOptions.Find, batchOptions.Cachebuster);
                                 batchResult.UpdateTotals(dr);
-                                if (pauseBetweenRequests > 0) await Task.Delay(new Random().Next(options.StaggerStart));
+                                if (pauseBetweenRequests > 0) await Task.Delay(new Random().Next(batchOptions.StaggerStart));
                             }                            
                         }
                         return batchResult;

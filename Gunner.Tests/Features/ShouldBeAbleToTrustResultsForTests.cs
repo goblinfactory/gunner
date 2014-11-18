@@ -81,7 +81,7 @@ namespace Gunner.Tests.Features
         private void Given_Gunner(int repeat)
         {
             Test.TraceStep();
-            var options = new Options()
+            var options = new BatchOptions()
                 {
                     Start = 10,
                     End = 30,

@@ -33,8 +33,17 @@ namespace Gunner.Console
 
         private static void Run(string[] args)
         {
-            var options = new Options();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
+            var options = GetGunnerOptions(args);
+            if (options == null) return;
+            var factory = new Factory();
+            var machineGun = factory.CreateMachineGun(options);
+            Task.WaitAll(new[] { machineGun.Run() }); 
+        }
+
+        private static BatchOptions GetGunnerOptions(string[] args)
+        {
+            var options = new BatchOptions();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options)) return null;
             if (options.Csv.HasText() && options.UrlList.HasText()) throw new ApplicationException("You cannot provide a value for csv as well as urls, only 1 option can be selected.");
             if (options.End > 5000) throw new ApplicationException("Maximum value atmo for users is 5000. This is due to socket connection limit. Later will detect if user can support more, if not show message how to tell OS you want more.");
             if (!string.IsNullOrWhiteSpace(options.Logfile))
@@ -43,11 +52,9 @@ namespace Gunner.Console
                 File.Create(path).Close();
                 options.Logfile = path;
             }
-
-            var factory = new Factory();
-            var machineGun = factory.CreateMachineGun(options);
-            Task.WaitAll(new[] { machineGun.Run() }); 
+            return options;
         }
 
     }
+
 }

@@ -108,7 +108,7 @@ namespace Gunner.Tests.Build
         {
             Test.TraceStep();
             var files = _buildOutputPath.GetFiles().Where(f => f.Name.EndsWith(".zip"));
-            var zip = files.OrderByDescending(z=> z.Name).Last();
+            var zip = files.OrderBy(z=> z.Name).Last();
             zip.Name.Should().Be(_version);
         }
 

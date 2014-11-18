@@ -66,14 +66,14 @@ namespace Gunner.Tests.Features
 
         //private MockLogwriter _logwriter;
 
-        private Options _options;
+        private BatchOptions _batchOptions;
 
         private void Given_Gunner_options_that_will_result_in_X_batches(int batches)
         {
             Test.TraceStep(batches);
             int increment = 5;
             int start = 10;
-            _options = new Options
+            _batchOptions = new BatchOptions
             {
                 Start = 10,
                 End = start + (increment * (batches - 1)),
@@ -93,7 +93,7 @@ namespace Gunner.Tests.Features
         private void Given_option_skip_batches_of(int i)
         {
             Test.TraceStep(i);
-            _options.SkipBatches = i;
+            _batchOptions.SkipBatches = i;
         }
 
         private void When_Gunner_is_run()
@@ -104,8 +104,8 @@ namespace Gunner.Tests.Features
             var trafficMonitor = new MockTrafficMonitor(100);
             var urls = new[] { "file1.json", "file2.json" };
             var downloader = new MockDownloader(new DownloadResult { ErrorCode = null, Success = true });
-            var reporter = new Reporter(_options, logwriter);
-            var gunner = new MachineGun(reporter, downloader, _options, urls, trafficMonitor, metricMonitoring);
+            var reporter = new Reporter(_batchOptions, logwriter);
+            var gunner = new MachineGun(reporter, downloader, _batchOptions, urls, trafficMonitor, metricMonitoring);
             Task.WaitAll(gunner.Run());
         }
 

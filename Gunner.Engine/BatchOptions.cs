@@ -116,11 +116,11 @@ namespace Gunner.Engine
             HelpText = "Fire off 1 random request (warning shot) to wake up the server before starting any testing. Useful if you want to wake up a server with a single request.")]
         public bool WarningShot { get; set; }
 
-        [Option("master", Required = false, DefaultValue = null,
+        [Option("master", DefaultValue = "127.0.0.1",
         HelpText = "ip address of the server that gunner is running in master mode on.")]
         public bool Master { get; set; }
 
-        [Option("port", Required = false, DefaultValue = null,
+        [Option("port", DefaultValue = 9090,
         HelpText = "port that gunner is listening on. (this is the same port on all gunner masters or slaves.)")]
         public int Port { get; set; }
 

@@ -75,48 +75,6 @@ namespace Gunner.Tests.Unit
             }
         }
 
-        public void SimulatePubSubSequenceExpectedFromGunnerMasterSlave()
-        {
-            // commands require a key (poor man's security)    
-            // sequence
-            // machine 1) gunner1 -master    (subscribes to the batch channel)
-            // machine 2) gunner2 -slave1     (subscribes to command channel) 
-            // machine 3) gunner3 -slave2     (subscribes to command channel)
-            // Master publishes startcommand to "command" channel
-            // slave1 receives command, runs it's first batch1 and publishes batch result to batch channel.
-            // slave2 receives command, runs it's first batch2 and publishes batch result to batch channel.
-            // master continues processing batches until it receives lastbatch from all the slaves
-            // master (gunner1) recieves batch1 ( it is not last batch)
-            // master (gunner1) recieves batch2 ( it is not last batch)
-            // gunner 2, runs 2nd (last) batch, and publishes Lastbatch result to batch channel.
-            // gunner 3, runs 2nd (last) batch, and publishes Lastbatch result to batch channel.
-            // master now has received lastbatch from all slaves
-            // master collates (combines) results from batches.
-        }
-
-        public class WhenGunnerRunningAsSlaveGunnerShould
-        {
-            public void PublishBatchResultsToBatchChannel()
-            {
-                
-            }
-
-            public void SubscribeToCommandChannel()
-            {
-
-            }
-
-            public void StartRunningLoadTestOnlyWhenStartCommandIsPublishedToStartChannel()
-            {
-                
-            }
-
-        }
-
-        public class WhenGunnerRunningAsMasterGunnerShould
-        {
-            
-        }
 
 
     }

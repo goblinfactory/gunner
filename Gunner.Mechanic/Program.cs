@@ -18,26 +18,7 @@ namespace Gunner.Mechanic
 
         public static void Main(string[] args, ILogWriter writer)
         {
-            if (args == null || args.Length == 0) 
-            { 
-                Usage();
-                return; 
-            }
-            try
-            {
-                Run(args);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error occurred, stopping.");
-
-                if (ex.InnerException != null)
-                    Console.WriteLine("Error was:{0}", ex.InnerException.Message);
-                else
-                    Console.WriteLine("Error was:{0}", ex.Message);
-                Usage();
-            }
-
+            new ConsoleHelper().RunCatchWriteExceptionsToConsole(args,Usage,Run);
         }
 
         private static void Usage()

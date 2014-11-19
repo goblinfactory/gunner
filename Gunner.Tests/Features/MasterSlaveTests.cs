@@ -16,6 +16,7 @@ namespace Gunner.Tests.MechanicTests
         [Test,Category("slow")]
         public void GunnerShouldBeAbleToBeRemotelyStarted()
         {
+            //NB! use zeromq to tell if the requirements have been met?
             //GivenGunnersRunningInSlaveMode(2);
             //var task1 = new bootstrapper().Start("mode","slave", "--port", "9090", "--server", "127.0.0.1");
             //task1.Start();
@@ -49,7 +50,7 @@ namespace Gunner.Tests.MechanicTests
         }
 
 
-        public void GunnerShouldReceiveCommandLineParamsWhenStartedRemotely()
+        public void GunnerShouldReceivBatchOptionsWhenStartedRemotely()
         {
             //GivenGunnerRunningInSlaveMode();
             //WhenMasterGunnerStarts();

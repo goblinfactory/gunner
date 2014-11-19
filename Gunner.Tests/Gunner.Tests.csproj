@@ -61,6 +61,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\Usage.cs" />
     <Compile Include="Package\Release.cs" />
     <Compile Include="Features\ShouldBeAbleToTrustResultsForTests.cs" />
     <Compile Include="Features\_FeatureBootstrapper.cs" />

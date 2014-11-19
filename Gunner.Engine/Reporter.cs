@@ -12,29 +12,29 @@ namespace Gunner.Engine
         string Header { get; }
     }
 
-    public interface IReporter
+    public interface IBatchReporter
     {
-        void WriteFormattedBatchResultHeading();
-        void WriteFormattedBatchLineResult(BatchRunResult batch);
+        void ReportBatchStart();
+        void ReportBatchResult(BatchRunResult batch);
     }
 
-    public class Reporter : IReporter
+    public class BatchReporter : IBatchReporter
     {
         private readonly IReporterFormat _format;
         private readonly ILogWriter _logwriter;
 
-        public Reporter(IReporterFormat format, ILogWriter logwriter)
+        public BatchReporter(IReporterFormat format, ILogWriter logwriter)
         {
             _format = format;
             _logwriter = logwriter;
         }
 
-        public void WriteFormattedBatchResultHeading()
+        public void ReportBatchStart()
         {
             Console.WriteLine(_format.Header);
         }
 
-        public void WriteFormattedBatchLineResult(BatchRunResult batch)
+        public void ReportBatchResult(BatchRunResult batch)
         {
             string logline = String.Format(_format.Format, 
                 batch.TimeStop, 

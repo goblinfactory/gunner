@@ -118,7 +118,7 @@ namespace Gunner.Engine
 
         [Option("master", DefaultValue = "127.0.0.1",
         HelpText = "ip address of the server that gunner is running in master mode on.")]
-        public bool Master { get; set; }
+        public string Master { get; set; }
 
         [Option("port", DefaultValue = 9090,
         HelpText = "port that gunner is listening on. (this is the same port on all gunner masters or slaves.)")]
@@ -126,7 +126,7 @@ namespace Gunner.Engine
 
         [Option("mode", Required = false, DefaultValue = null,
         HelpText = "master | slave | standalone (leave null, do not supply if running standalone.)")]
-        public bool Mode { get; set; }
+        public string Mode { get; set; }
 
         [HelpOption]
         public string GetUsage()

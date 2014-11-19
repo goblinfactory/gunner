@@ -16,7 +16,7 @@ namespace Gunner.Engine
     {
 
         public bool IsRunning { get; set; }
-        private readonly IReporter _reporter;
+        private readonly IBatchReporter _batchReporter;
         private readonly IDownloader _downloader;
         private readonly BatchOptions _batchOptions;
         private readonly IMetricMonitoring _metricMonitoring;
@@ -30,9 +30,9 @@ namespace Gunner.Engine
         }
 
 
-        public MachineGun(IReporter reporter, IDownloader downloader, BatchOptions batchOptions,  string[] urls, ITrafficMonitor trafficMonitor, IMetricMonitoring metricMonitoring = null)
+        public MachineGun(IBatchReporter batchReporter, IDownloader downloader, BatchOptions batchOptions,  string[] urls, ITrafficMonitor trafficMonitor, IMetricMonitoring metricMonitoring = null)
         {
-            _reporter = reporter;
+            _batchReporter = batchReporter;
             _downloader = downloader;
             _batchOptions = batchOptions;
             _metricMonitoring = metricMonitoring ?? new NullMetricMonitor();
@@ -62,7 +62,7 @@ namespace Gunner.Engine
                 FireOneShotAcrossTheBowAndWakeThatSuckerUp();
             else if (_metricMonitoring.SystemBeingMonitoredIsCold) 
                 FireOneShotAcrossTheBowAndWakeThatSuckerUp();
-            _reporter.WriteFormattedBatchResultHeading();
+            _batchReporter.ReportBatchStart();
             if (_batchOptions.Verbose)
             {
                 Console.WriteLine("------ test settings ------");
@@ -87,7 +87,7 @@ namespace Gunner.Engine
             {
                 batchNumber++;
                 bool skipBatch = (batchNumber <= _batchOptions.SkipBatches);
-                BatchRunResult batchResult = await TestCocurrentRequests(_reporter, batchNumber,_downloader, skipBatch, _metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _batchOptions, batch, _batchOptions.Repeat, _batchOptions.Gap);
+                BatchRunResult batchResult = await TestCocurrentRequests(_batchReporter, batchNumber,_downloader, skipBatch, _metricMonitoring, _trafficMonitor, _logWriter, grandTotal, startMemory, _batchOptions, batch, _batchOptions.Repeat, _batchOptions.Gap);
                 _batchRunResults.Add(batchResult);
                 grandTotal += batchResult.Total;
                 Thread.Sleep(_batchOptions.Pause);
@@ -99,7 +99,7 @@ namespace Gunner.Engine
         }
         
         // pass in test state DTO
-        static async Task<BatchRunResult> TestCocurrentRequests(IReporter reporter, int batchNumber, IDownloader downloader, bool skipBatch, IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, BatchOptions batchOptions, int users, int repeat, int pauseBetweenRequests)
+        static async Task<BatchRunResult> TestCocurrentRequests(IBatchReporter batchReporter, int batchNumber, IDownloader downloader, bool skipBatch, IMetricMonitoring metricMonitoring, ITrafficMonitor network, ILogWriter logWriter, int grandTotal, decimal MbStart, BatchOptions batchOptions, int users, int repeat, int pauseBetweenRequests)
         {
             var batch = new BatchRunResult(batchNumber);
             network.StartMonitoring();
@@ -159,7 +159,7 @@ namespace Gunner.Engine
             batch.Users = users;
             // =============================================================
 
-            reporter.WriteFormattedBatchLineResult(batch);
+            batchReporter.ReportBatchResult(batch);
             return batch;
         }
 

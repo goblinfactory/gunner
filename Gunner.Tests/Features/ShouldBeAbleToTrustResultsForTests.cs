@@ -102,7 +102,7 @@ namespace Gunner.Tests.Features
             var urls = new UrlReader(options).ReadUrls(Environment.CurrentDirectory);
             var errorLogger = new MockErrorLogger(true);
             var downloader = new Downloader(errorLogger);
-            var reporter = new BatchReporter(options, _logwriter);
+            var reporter = new ConsoleBatchReporter(options, _logwriter);
             _gunner = new MachineGun(reporter, downloader, options, urls, trafficMonitor, metricMonitoring);
         }
 

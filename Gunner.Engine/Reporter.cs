@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Gunner.Engine
 {
-    public interface IReporterFormat
+    public interface IStringReporterFormat
     {
         string Format { get;  }
         string Header { get; }
@@ -18,12 +18,12 @@ namespace Gunner.Engine
         void ReportBatchResult(BatchRunResult batch);
     }
 
-    public class BatchReporter : IBatchReporter
+    public class ConsoleBatchReporter : IBatchReporter
     {
-        private readonly IReporterFormat _format;
+        private readonly IStringReporterFormat _format;
         private readonly ILogWriter _logwriter;
 
-        public BatchReporter(IReporterFormat format, ILogWriter logwriter)
+        public ConsoleBatchReporter(IStringReporterFormat format, ILogWriter logwriter)
         {
             _format = format;
             _logwriter = logwriter;

@@ -95,7 +95,7 @@ namespace Gunner.Tests.Features
             var trafficMonitor = new MockTrafficMonitor(100);
             var urls = new[] { "file1.json", "file2.json" };
             var downloader = new MockDownloader(new DownloadResult { ErrorCode = null, Success = true });
-            var reporter = new BatchReporter(_batchOptions, logwriter);
+            var reporter = new ConsoleBatchReporter(_batchOptions, logwriter);
             var gunner = new MachineGun(reporter,downloader,_batchOptions, urls, trafficMonitor, metricMonitoring);
             Task.WaitAll(gunner.Run());
         }

@@ -5,7 +5,7 @@ using CommandLine.Text;
 
 namespace Gunner.Engine
 {
-    public class BatchOptions : IUrlReader, IReporterFormat
+    public class BatchOptions : IUrlReader, IStringReporterFormat
     {
         public BatchOptions()
         {

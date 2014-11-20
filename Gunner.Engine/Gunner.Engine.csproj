@@ -75,6 +75,7 @@
     <Compile Include="MetricMonitoring.cs" />
     <Compile Include="NullMetricMonitor.cs" />
     <Compile Include="MQExtensions.cs" />
+    <Compile Include="RemoteCommander.cs" />
     <Compile Include="Reporter.cs" />
     <Compile Include="UserRunResult.cs" />
     <Compile Include="MachineGun.cs" />

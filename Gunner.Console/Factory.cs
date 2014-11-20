@@ -23,7 +23,7 @@ namespace Gunner.Console
             var trafficMonitor      = new NetworkTrafficMonitor();
             var errorLogger         = new ErrorLogger(batchOptions.ErrorLogfile,batchOptions.LogErrors);
             var downloader          = new Downloader(errorLogger);
-            var reporter            = new BatchReporter(batchOptions, logwriter);
+            var reporter            = new ConsoleBatchReporter(batchOptions, logwriter);
             
             var machineGun = new MachineGun(reporter,downloader,batchOptions, urls, trafficMonitor, metricMonitoring);
             return machineGun;

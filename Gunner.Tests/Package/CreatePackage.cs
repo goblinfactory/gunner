@@ -82,6 +82,7 @@ namespace Gunner.Tests.Build
             Test.TraceStep();
             _buildOutputPath = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, @"..\..\..\build"));
             _binOutputPath = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, @"..\..\..\build\bin"));
+            if (!_binOutputPath.Exists) _binOutputPath.Create();
             Console.WriteLine( _buildOutputPath.FullName);
             var packagePath = _buildOutputPath + @"\" + _version;
             _package = new FileInfo(packagePath);

@@ -9,16 +9,16 @@ using Gunner.Engine.Mechanic;
 
 namespace Gunner.Mechanic
 {
-    public class Bootstrapper
+    public class MechanicBootstrapper
     {
         private readonly ILogWriter _console;
 
-        public Bootstrapper(ILogWriter console)
+        public MechanicBootstrapper(ILogWriter console)
         {
             _console = console;
         }
 
-        public Bootstrapper()
+        public MechanicBootstrapper()
         {
             _console = new ConsoleWriter();
         }
@@ -76,12 +76,12 @@ namespace Gunner.Mechanic
             {
                 case Verb.listen:
                     var lo = (ListenSubOptions)invokedVerbInstance;
-                    using (var messenger = new SimpleSocketTester("127.0.0.1", lo.Port, new [] { _console }))
+                    using (var messenger = new SimpleSocketTester(lo.Server, lo.Port, new [] { _console }))
                         messenger.RecieveMessage(lo.Response, lo.Cnt);
                     break;
                 case Verb.send:
                     var so = (SendSubOptions)invokedVerbInstance;
-                    using (var messenger = new SimpleSocketTester("127.0.0.1", so.Port, new[] { _console }))
+                    using (var messenger = new SimpleSocketTester(so.Server, so.Port, new[] { _console }))
                         messenger.SendMessages(so.Wait, so.Messages);
                     break;
                 default:throw new ArgumentOutOfRangeException("invokedVerb",invokedVerb,"not supported.");

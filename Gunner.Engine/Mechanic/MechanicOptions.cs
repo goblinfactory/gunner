@@ -47,6 +47,10 @@ namespace Gunner.Engine.Mechanic
         HelpText = "Response(s) to send to sender. Optionally include {message} to format a reply. Seperate multiple responses with |. Put quotes around if use a pipe in this value.")]
         public string Response { get; set; }
 
+        [Option('s', "server", DefaultValue = "127.0.0.1",
+            HelpText = "server to send to.")]
+        public string Server { get; set; }
+
         [Option('c', "cnt", DefaultValue = 1,
         HelpText = "Number of messages to wait for. Select 0 to run continuously.")]
         public int Cnt { get; set; }

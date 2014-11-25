@@ -15,7 +15,7 @@ namespace Gunner.Engine
                                  name.Version.Major,
                                  name.Version.MajorRevision,
                                  name.Version.Minor,
-                                 name.Version.MinorRevision).Replace("-", "");
+                                 name.Version.MinorRevision).Replace("-", "1");
         }
 
     }

@@ -24,8 +24,8 @@ namespace Gunner.Tests.Features
             {
                 listenwriter = new MockLogWriter(false);
                 sendwriter = new MockLogWriter(false);
-                var listenTask = Task.Run(() => new Mechanic.MechanicBootstrapper(listenwriter).Start("listen", "-r", "{message} received", "-c", "3", "-p", "9090"));
-                var sendTask = Task.Run(() => new Mechanic.MechanicBootstrapper(sendwriter).Start("send", "-p", "9090", "-w", "0", "-s", "127.0.0.1", "-m", "hello1|hello2|hello3"));
+                var listenTask = Task.Run(() => new Mechanic.MechanicBootstrapper(listenwriter).Start("listen","-s","127.0.0.1", "-r", "{message} received", "-c", "3", "-p", "9090"));
+                var sendTask = Task.Run(() => new Mechanic.MechanicBootstrapper(sendwriter).Start("send", "-p", "9090","-s","127.0.0.1","-w", "0", "-s", "127.0.0.1", "-m", "hello1|hello2|hello3"));
                 Task.WaitAll(listenTask, sendTask);                
             }
 

@@ -47,7 +47,7 @@ namespace Gunner.Engine.Mechanic
         HelpText = "Response(s) to send to sender. Optionally include {message} to format a reply. Seperate multiple responses with |. Put quotes around if use a pipe in this value.")]
         public string Response { get; set; }
 
-        [Option('s', "server", DefaultValue = "127.0.0.1",
+        [Option('s', "server", Required = true,
             HelpText = "server to send to.")]
         public string Server { get; set; }
 
@@ -74,7 +74,6 @@ namespace Gunner.Engine.Mechanic
         {
             Port = 9090;
             Wait = 1000;
-            Server = "127.0.0.1";
             Message = "Test Message";
         }
 
@@ -87,7 +86,7 @@ namespace Gunner.Engine.Mechanic
         public int Wait { get; set; }
 
 
-        [Option('s', "server", DefaultValue = "127.0.0.1",
+        [Option('s', "server", Required = true,
             HelpText = "server to send to.")]
         public string Server { get; set; }
 

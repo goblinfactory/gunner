@@ -108,8 +108,7 @@ namespace Gunner.Tests.Build
         private void AndThePackageShouldBeNamedAccordingToTheBuildNumber()
         {
             Test.TraceStep();
-            var files = _buildOutputPath.GetFiles().Where(f => f.Name.EndsWith(".zip"));
-            var zip = files.OrderBy(z=> z.Name).Last();
+            var zip = _buildOutputPath.GetFiles().Where(f => f.Name.EndsWith(".zip")).OrderBy(f => f.CreationTime).Last();
             zip.Name.Should().Be(_version);
         }
 

@@ -121,7 +121,7 @@ namespace Gunner.Engine
                             await Task.Delay(new Random().Next(batchOptions.StaggerStart));
                             for (int r = 0; r < repeat; r++)
                             {
-                                var url = GetUrl(r, batchOptions.Cachebuster);
+                                var url = GetUrl(r, batchOptions.Cachebuster, batchOptions.Sequential);
                                 var dr = downloader.Download(url, client, batchOptions.Find, batchOptions.Cachebuster);
                                 batchResult.UpdateTotals(dr);
                                 if (pauseBetweenRequests > 0) await Task.Delay(new Random().Next(batchOptions.StaggerStart));
@@ -185,10 +185,11 @@ namespace Gunner.Engine
 
         private static string[] _urls;
 
-        private static string GetUrl(int i, bool cachebust)
+        private static string GetUrl(int i, bool cachebust, bool random = true)
         {
             int len = _urls.Length;
-            var url = _urls[new Random().Next(len)];
+            string url;
+            url = (random) ? _urls[new Random().Next(len)] : _urls[i%len];
             return cachebust ? UrlReader.Bust(url) : url;
         }
     }

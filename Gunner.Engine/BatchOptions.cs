@@ -39,6 +39,9 @@ namespace Gunner.Engine
            HelpText = "Character delimiter for lists. If you want to use a | then you will need to enclose any values containing a pipe with quotes (\")")]
         public string Delimiter { get; set; }
 
+        [Option("sequential", DefaultValue = false,
+           HelpText = "Sequential? (false = random)")] 
+        public bool Sequential { get; set; }
         
         [Option('e', "end", DefaultValue = 500,
             HelpText = "Total number of simultaneous user connections (parallel connections) that the tests will attempt to ramp up to.")]

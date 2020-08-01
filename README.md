@@ -1,7 +1,7 @@
 Gunner
 ====
 
-Gunner is a proof of concept command line Load test tool for windows to rapid fire requests against a test or pre-production server. 
+Gunner  command line Load test tool to rapid fire requests against a test or pre-production server. 
 A design goal from the outset was to have as small a memory and cpu usage footprint as possible and at the same time be capable of delivering high concurrency load testing, basically it's a *super simplified poor man's load runner, and-or a one liner command-line jmeter replacement*.
 
 Update : 1.8.2020

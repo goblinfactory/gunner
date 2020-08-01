@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Gunner.Engine")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Command line Load test tool to rapid fire requests against a test or pre-production server.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Goblinfactory Limited")]
 [assembly: AssemblyProduct("Gunner.Engine")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright Goblinfactory Ltd 2014 to 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

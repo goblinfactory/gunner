@@ -4,6 +4,9 @@ Gunner
 Gunner is a proof of concept command line Load test tool for windows to rapid fire requests against a test or pre-production server. 
 A design goal from the outset was to have as small a memory and cpu usage footprint as possible and at the same time be capable of delivering high concurrency load testing, basically it's a *super simplified poor man's load runner, and-or a one liner command-line jmeter replacement*.
 
+Update : 1.8.2020
+I wrote this code originally in 2014 thinking I could make a small commercial testing library that could use business'es developer machines after hours to run load tests in a small mesh or cluster, I forgot about it for a few years and now need to do some load testing of my own on some azure functions. My thinking is to take this console app, and publish it as a nuget package with a simpler API so that I can reference this from Linqpad and use this as a very simple framework for doing simple load tests that can rapidly tell me the breaking points (limits) of any code. (in my case, Azure functions).
+
 Compatibility:
 ---
 - .NET Framework 4.0+

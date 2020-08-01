@@ -85,7 +85,121 @@ __**Gunner currently reports different values to what system performance monitor
 	"10/27/2014 00:34:08.534","0.000000"
 	"10/27/2014 00:34:09.536","2994.225337"
 
+# Gunner options
 
+Run `gunner.exe` without passing in any options, or any invalid option parameters and you will get this output
+
+```log
+
+Gunner 0.1.1.43173
+Gunner
+
+  -a, --csv            relative path to a csv file containing urls to request.
+
+  -b, --logerrors      (Default: False) Whether to log errors or not. If you
+                       have errors, to reproduce just do a single run with 1
+                       user afterwards with repeat set to = max urls in your
+                       csv file.
+
+  --errorfile          (Default: ) Error logfile to write out individual errors
+                       to. Useful if you want to run a single test batch to
+                       check entities before running a load test. (sanity check
+                       first.) Differential between system performance issues,
+                       and application or user errors. i.e. should not run a
+                       load test if a sanity check test fails.
+
+  -c, --cachebuster    (Default: False) Whether to append a cachebuster string
+                       to the end of your url or not.
+
+  -d, --delimiter      (Default: ,) Character delimiter for lists. If you want
+                       to use a | then you will need to enclose any values
+                       containing a pipe with quotes (")
+
+  --sequential         (Default: False) Sequential? (false = random)
+
+  -e, --end            (Default: 500) Total number of simultaneous user
+                       connections (parallel connections) that the tests will
+                       attempt to ramp up to.
+
+  -f, --format         (Default: {0:u},{1,9},{2,11:0.00},{3,7},{4,7},{5,7},
+                       {6,7:0.0000}ms,{7,7:0.00}Mb, {8,7:0.00}Mb, ({9,7:0.0}Mb
+                       ram)) Test results format string. Please keep the
+                       sequence the same, otherwise headers wont match and,or,
+                       automated log reporting can fail.
+
+  -g, --gap            (Default: 100) Pause (gap) between each request. (random
+                       from 0 to this value) to avoid clumping.
+
+  -h, --header         (Default:
+                       date----------------,----total,--------rps,--users,succes
+                       s,---fail,--response,--MB
+                       (in),---MB(out),---------MB(RAM)) Default header for
+                       formatting the console output.
+
+  -i, --increment      (Default: 50) Number of concurrent users to increase
+                       each test by.
+
+  -l, --logfile        (Default: ) Name of logfile, optional relative path.
+                       Will use path of local execution. Will overwrite file if
+                       already exists, will create if not.
+
+  -n, --find           Required. String to search for that must be returned in
+                       the body of the response, that confirms the request was
+                       valid.
+
+  -p, --pause          (Default: 5000) Pause in ms between tests, allows a
+                       webserver to settle and-or idle, also allows you to more
+                       easily see the diferent test steps.
+
+  -r, --repeat         (Default: 100) Number of times each user will request
+                       the url given to him.
+
+  -s, --start          (Default: 50) Number of concurrent users to start with.
+                       Gunner will start with this value (s), run tests up
+                       until (u), incrementing in steps of (i)
+
+  --stagger            (Default: 100) Starting of the batches will be staggered
+                       randomly between 0 and this value (ms) to avoid clumping.
+
+  -t, --timeout        (Default: 600) Test timeout. Maximum time (in seconds)
+                       allowed for each (up to the final batch) to all return.
+                       (not yet done any decent reporting for when this
+                       happens. TODO)
+
+  -u, --urls           delimited list of urls to test.  Each user will be
+                       assigned a url from the list of urls, using round robin.
+
+  -v, --verbose        (Default: False) displays response of first 10 requests
+                       in console. (useful for confirming network connectivity.)
+
+  -w, --root           (Default: http://localhost/) root website prefix for all
+                       the urls,so that the urls can be smaller and easier to
+                       write in a list
+
+  --skipbatch          (Default: 0) Number of batches to skip from logging,
+                       reporting and testing. So that the system can be warmed
+                       up before monitoring acts on the results. (Normally you
+                       need to skip enough batches that your monitoring
+                       averages don't overlap a period while your testing had
+                       not yet started.)
+
+  --warningshot        (Default: False) Fire off 1 random request (warning
+                       shot) to wake up the server before starting any testing.
+                       Useful if you want to wake up a server with a single
+                       request.
+
+  --master             (Default: 127.0.0.1) ip address of the server that
+                       gunner is running in master mode on.
+
+  --port               (Default: 9090) port that gunner is listening on. (this
+                       is the same port on all gunner masters or slaves.)
+
+  --mode               (Default: ) master | slave | standalone (leave null, do
+                       not supply if running standalone.)
+
+  --help               Display this help screen.
+
+```
 
 Acknowledgements:
 ---

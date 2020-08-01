@@ -13,6 +13,8 @@ namespace Gunner.Engine
         string UrlList { get; }
         string Root { get;  }
         string Csv { get; }
+
+        bool Cachebuster { get; }
     }
 
     public class UrlReader
@@ -21,6 +23,7 @@ namespace Gunner.Engine
         private string _uriRoot;
         private string _urls;
         private string _csv;
+        private bool   _bust;
 
         public UrlReader(IUrlReader option)
         {
@@ -28,6 +31,7 @@ namespace Gunner.Engine
             _urls = option.UrlList;
             _uriRoot = option.Root;
             _csv = option.Csv;
+            _bust = option.Cachebuster;
         }
 
         public string[] ReadUrls(string currentDirectory)
@@ -48,7 +52,7 @@ namespace Gunner.Engine
             var urlList = new string[] { };
             urlList = _urls
             .Split(new [] { _delimiter }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(u => string.Format("{0}{1}", _uriRoot, Bust(u)))
+            .Select(u => string.Format("{0}{1}", _uriRoot, _bust ? Bust(u) : u))
             .ToArray();
             return urlList;
         }

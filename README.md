@@ -32,6 +32,7 @@ Quickstart
 ----------
 
 1.	Download zip, extract to any folder, optionally add the path to gunner to your env path.
+1.  [start python webserver](https://stackoverflow.com/questions/17351016/set-up-python-simplehttpserver-on-windows) in the Gunner.www folder for a simple baseline test. `python -m http.server 8082`
 1.	run gunner.
 
 ``gunner -start 10 -end 100 -repeat 100 -increment 10 -find "latitude" -root http://localhost:8082 -urls "small1.json,small2.json"`` 

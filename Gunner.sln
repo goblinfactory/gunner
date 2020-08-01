@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30014.187
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Engine", "Gunner.Engine\Gunner.Engine.csproj", "{EAD5B0BA-3FF2-42AE-AAFE-546D4872CEAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Tests", "Gunner.Tests\Gunner.Tests.csproj", "{D27F99CF-65AC-40CD-8F2D-45FB9C079CAE}"
@@ -11,10 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		constant.bat = constant.bat
 		fire.bat = fire.bat
+		gunner.bat = gunner.bat
 		PERFORMANCE.md = PERFORMANCE.md
 		README.md = README.md
 		Gunner.Console\Test404.bat = Gunner.Console\Test404.bat
 		Gunner.Console\TestLocal.bat = Gunner.Console\TestLocal.bat
+		Gunner.Console\TestLocal.md = Gunner.Console\TestLocal.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunner.Mechanic", "Gunner.Mechanic\Gunner.Mechanic.csproj", "{FFD9E4D3-EABC-48EF-B5B1-0AA1F0D94AE4}"
@@ -44,5 +48,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4368DC36-E0B4-4138-A43D-BCF3F8104CC1}
 	EndGlobalSection
 EndGlobal

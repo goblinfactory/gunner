@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
-using FluentAssertions;
-using Gunner.Engine;
 using Gunner.Tests.Mocks;
 using NUnit.Framework;
-using NetMQ;
 
 namespace Gunner.Tests.Features
 {

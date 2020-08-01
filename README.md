@@ -120,7 +120,7 @@ Todo
 1. Update this readme. As of 16/11/14, this is a bit out of date. Oops!
 1. Install script that checks that IIS is available, and if yes, creates localhost:8082 website, so that unit tests for performance will be able to be run.
 
-Roadmap (high priority ideas)
+* Roadmap (high priority ideas)
 ---
 
  - Put in place decent test coverage, and CI server so that contributors can easily contribute. With decent tests in place, could then easily port to Java and other languages.
@@ -156,3 +156,5 @@ Alan Hemmings
   - [About.me](http://about.me/alanhemmings)
   - [www.goblinfactory.co.uk](http://www.goblinfactory.co.uk)
   - [snowcode.com - developer conferences at ski resorts](http://www.snowcode.com)
+
+  * this was the roadmap in 2014, I've checked this in with minimal changes.
